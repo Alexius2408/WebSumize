@@ -1,6 +1,13 @@
-// Central file for application-wide constants.
-// Each section groups related constants.
+/*
+ WebSumize
+ Copyright (c) 2026 Alexius2408
 
+ This file is part of the WebSumize project.
+ License: Personal / Non-Commercial Use Only
+
+ File: constants.js
+ Description: Got all constants that are necessry for the App to run. It is in 1 File for easy changes through the application.
+*/
 
 
 // General application info
