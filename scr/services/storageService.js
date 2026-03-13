@@ -1,5 +1,13 @@
-// This File Stores data Like Password, username
-// and settings unsing keytar
+/*
+ WebSumize
+ Copyright (c) 2026 Alexius2408
+
+ This file is part of the WebSumize project.
+ License: Personal / Non-Commercial Use Only
+
+ File: storageService.js
+ Description: Handles the storage of user data using the keytar library for secure credential storage locally.
+*/
 
 const { GENERALLY } = require('../utils/constants.js');
 const keytar = require('keytar');

@@ -5,6 +5,6 @@
  This file is part of the WebSumize project.
  License: Personal / Non-Commercial Use Only
 
- File: mini.js
+ File: windows.js
  Description:
 */

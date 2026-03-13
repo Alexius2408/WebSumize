@@ -1,5 +1,13 @@
-// This File is the entry point for the Electron App
-// It creates the main window and handles IPC communication
+/*
+ WebSumize
+ Copyright (c) 2026 Alexius2408
+
+ This file is part of the WebSumize project.
+ License: Personal / Non-Commercial Use Only
+
+ File: main.js
+ Description: Main process of WebSumize. Manages window creation, IPC, user authentication, and WebUntis data.
+*/
 
 const { app, BrowserWindow, ipcMain, ipcRenderer } = require("electron");
 const { getData, delData } = require("../services/storageService.js");
@@ -86,9 +94,16 @@ async function setupIcpHandelers() {
   });
 
   ipcMain.handle("untis-login", async () => {
-    await untisInstance.login();
-    return "logged in";
+    if (untisInstance) {
+      await untisInstance.login();
+    }
   });
+
+  ipcMain.handle("untis-validate-session", async () => {
+    if (!untisInstance) return true;
+    return await untisInstance.validateSession();
+  });
+
 
   ipcMain.handle("switch-window", async (event, windowName) => {
     if (!win) createWindow();
@@ -99,4 +114,5 @@ async function setupIcpHandelers() {
     if (!untisInstance) throw new Error("Not logged in to WebUntis.");
     return await untisInstance.getOwnTimetableForToday();
   });
+
 }
