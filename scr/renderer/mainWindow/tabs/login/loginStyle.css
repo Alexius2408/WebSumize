@@ -1,4 +1,5 @@
 :root {
+  /* Light mode colors */
   --bg-color: #e0e0e0;
   --border-color: #d2d2d2;
   --text-color: #0a0a0a;
@@ -7,6 +8,7 @@
 }
 
 @media (prefers-color-scheme: dark) {
+  /* Dark mode colors */
   :root {
     --bg-color: #1f1f1f;
     --border-color: #181818;

@@ -1,3 +1,14 @@
+/*
+ WebSumize
+ Copyright (c) 2026 Alexius2408
+
+ This file is part of the WebSumize project.
+ License: Personal / Non-Commercial Use Only
+
+ File: loginScript.js
+ Description: Handles the login process in the login window. The login wndow gets shown if there is no local User Data
+*/
+
 const { setData } = require("../../../../services/storageService.js");
 const { ipcRenderer } = require('electron');
 
