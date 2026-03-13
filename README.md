@@ -17,12 +17,13 @@ The app runs in the system tray, allowing you to open a small popup window to qu
 
 ### Features
 
-- Tray icon with quick popup  
+- Tray icon
+- Small Window to show the most important things
 - Full window with tabs  
 - Stores login locally  
-- Works on Windows, macOS, and Linux (hopefully!)  
-- Supports many screen sizes  
-- Customizable CSS in multiple sections via app settings  
+- Works on Windows, macOS, and Linux (hopefully!)
+- Supports many screen sizes
+- Customizable CSS in multiple sections via app settings
 
 ---
 
@@ -32,7 +33,7 @@ The app runs in the system tray, allowing you to open a small popup window to qu
 - HTML  
 - CSS  
 - JavaScript  
-- [WebUntis JavaScript Api](https://github.com/SchoolUtils/WebUntis)
+    - [WebUntis JavaScript Api](https://github.com/SchoolUtils/WebUntis)
 ---
 
 ## License & Attribution
@@ -44,16 +45,12 @@ licensed under the MIT License. See `LICENSE-WebUntisAPI` for details.
 
 ### Why I Built This App
 
-A lot of people might be like, “Why are you making a whole app for this? WebUntis already does all of it in the browser.” Honestly, the main reason is that I’m bored and I like coding fun stuff. But also, I kinda hate how much time it takes to use WebUntis. You have to open your browser, type in the website, log in every time, search for your timetable, and if you wanna, figure out how much time you have left before your next class. It just feels like a lot of clicking and thinking for something that should be easy.
+A lot of people might be like, “Why are you making a whole app for this? WebUntis already does all of it in the browser.” Honestly, the main reason is that I'm bored and I like coding fun stuff. But also, I kinda hate how much time it takes to use WebUntis. You have to open your browser, type in the website, log in every time, search for your timetable, and if you wanna, figure out how much time you have left before your next class. For me it just feels like a lot of clicking and thinking for something that should be easy.
 
-So I thought, why not make an app that does all of that for you? You just log in once, and boom—everything is right there. You can see your timetable, how much time is left in your current lesson, and what class comes next. It just makes life easier and saves time, so you can spend less time clicking and more time doing literally anything else.
+So I thought, why not make an app that does all of that for you? You just log in once, and everything is right there. You can see your timetable, how much time is left in your current lesson, and what class comes next.
 
 ---
 
 ### Status
 
 Currently in development
-
-
-
-
