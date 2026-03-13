@@ -39,6 +39,7 @@ The app runs in the system tray, allowing you to open a small popup window to qu
 
 This project includes code from the WebUntis API Client by SchoolUtils,
 licensed under the MIT License. See `LICENSE-WebUntisAPI` for details.
+
 ---
 
 ### Why I Built This App
