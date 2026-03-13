@@ -1,6 +1,18 @@
 // This file is responsible for logging into WebUntis using the WebUntis library.
 // Its gets the username, password, school and url from the storageService
 // It gets the Information by asking at the begining of the app for the informations or if the data is null
+/*
+ WebSumize
+ Copyright (c) 2026 Alexius2408
+
+ This file is part of the WebSumize project.
+ License: Personal / Non-Commercial Use Only
+
+ File: logger.js
+ Description: Handles logging functionality for the application using the WebUntis API library.
+ Link to WebUntis API: https://github.com/SchoolUtils/WebUntis
+*/
+
 
 const { WebUntis } = require("webuntis");
 const { getData } = require("../services/storageService.js");
@@ -31,8 +43,6 @@ async function loginUntis() {
   const untisInstance = await createUntisInstance();
   await untisInstance.login();
 }
-
-// Do not create untis instance at top level, use createUntisInstance() when needed
 
 module.exports = {
   loginUntis,
