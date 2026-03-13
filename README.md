@@ -35,6 +35,12 @@ The app runs in the system tray, allowing you to open a small popup window to qu
 - [WebUntis JavaScript Api](https://github.com/SchoolUtils/WebUntis)
 ---
 
+## License & Attribution
+
+This project includes code from the WebUntis API Client by SchoolUtils,
+licensed under the MIT License. See `LICENSE-WebUntisAPI` for details.
+---
+
 ### Why I Built This App
 
 A lot of people might be like, “Why are you making a whole app for this? WebUntis already does all of it in the browser.” Honestly, the main reason is that I’m bored and I like coding fun stuff. But also, I kinda hate how much time it takes to use WebUntis. You have to open your browser, type in the website, log in every time, search for your timetable, and if you wanna, figure out how much time you have left before your next class. It just feels like a lot of clicking and thinking for something that should be easy.
