@@ -32,7 +32,7 @@ The app runs in the system tray, allowing you to open a small popup window to qu
 - HTML  
 - CSS  
 - JavaScript  
-
+- [WebUntis JavaScript Api](https://github.com/SchoolUtils/WebUntis)
 ---
 
 ### Why I Built This App
