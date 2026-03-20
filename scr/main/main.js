@@ -78,10 +78,10 @@ async function createUnitsInstance() {
   if (!data) return null;
   let userData = JSON.parse(data);
   return (untisInstance = new WebUntis(
-    "userData.schoolName",
+    userData.schoolName,
     userData.username,
     userData.password,
-    "userData.schoolName.webuntis.com",
+    userData.schoolUrl,
   ));
 }
 
