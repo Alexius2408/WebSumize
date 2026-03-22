@@ -48,6 +48,7 @@ p {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  margin-left: auto;
   justify-content: center;
   align-items: center;
 }
@@ -119,4 +120,36 @@ button {
 button:hover {
   filter: brightness(115%);
   scale: 1.02;
+}
+
+#writer {
+  font-family: monospace;
+  font-size: 3rem;
+  white-space: pre-wrap;
+  max-width: 90vw;
+  margin: 0.75vw;
+  word-wrap: break-word;
+  color: var(--text-color);
+  display: flex;
+  vertical-align: top;
+  padding-left: 1em;
+  text-indent: 0;
+}
+
+#cursor {
+  display: inline-block;
+  width: 0.75ch;
+  animation: blink 0.85s infinite;
+}
+
+@keyframes blink {
+  0%,
+  50%,
+  100% {
+    opacity: 1;
+  }
+  25%,
+  75% {
+    opacity: 0;
+  }
 }

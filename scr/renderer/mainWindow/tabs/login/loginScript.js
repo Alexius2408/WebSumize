@@ -10,7 +10,7 @@
 */
 
 const { setData } = require("../../../../services/storageService.js");
-const { ipcRenderer } = require('electron');
+const { ipcRenderer } = require("electron");
 
 const button = document.getElementById("loginButton");
 const usernameInput = document.getElementById("username");
@@ -18,21 +18,58 @@ const passwordInput = document.getElementById("password");
 const schoolNameInput = document.getElementById("schoolName");
 const schoolUrlInput = document.getElementById("schoolUrl");
 
+const texts = [
+  "Made with Cromium!",
+  "Made by Alexius2408!",
+  "Made for Students, Teachers, for EVERYONE!",
+  "Check out my GitHub: github.com/Alexius2408",
+  "Everything at one place!",
+  "Your timetable, your style!",
+];
+
+const textEl = document.getElementById("writer-content");
+
+let typingIndex = 0;
+let typingText = "";
+
+function tippen() {
+  typingText = texts[Math.floor(Math.random() * texts.length)];
+  typingIndex = 0;
+  textEl.innerHTML = "";
+  typeCharLoop();
+}
+
+function typeCharLoop() {
+  if (typingIndex < typingText.length) {
+    textEl.innerHTML += typingText[typingIndex];
+    typingIndex++;
+    setTimeout(typeCharLoop, 50);
+  }
+}
+
 button.addEventListener("click", async (event) => {
   event.preventDefault();
   const username = usernameInput.value;
   const password = passwordInput.value;
   const schoolName = schoolNameInput.value;
   const schoolUrl = schoolUrlInput.value;
-  let data = JSON.stringify({ username: String(username), password: String(password), schoolName: String(schoolName), schoolUrl: String(schoolUrl) });
+  let data = JSON.stringify({
+    username: String(username),
+    password: String(password),
+    schoolName: String(schoolName),
+    schoolUrl: String(schoolUrl),
+  });
   await setData(data);
   try {
     await ipcRenderer.invoke("units-create-instance");
     await ipcRenderer.invoke("untis-login");
-    await ipcRenderer.invoke("switch-window", "../renderer/mainWindow/index.html");
-    
+    await ipcRenderer.invoke(
+      "switch-window",
+      "../renderer/mainWindow/index.html",
+    );
   } catch (err) {
     console.log("Failed to get timetable or login:", err);
   }
-
 });
+
+tippen();
