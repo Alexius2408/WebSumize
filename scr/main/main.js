@@ -88,14 +88,23 @@ async function createUnitsInstance() {
 async function setupIcpHandelers() {
   ipcMain.handle("units-create-instance", async () => {
       untisInstance = await createUnitsInstance();
-      if (untisInstance == null) {
-        ipcRenderer.invoke("switch-window", "../renderer/mainWindow/tabs/login/login.html");
-      }
   });
 
   ipcMain.handle("untis-login", async () => {
     if (untisInstance) {
       await untisInstance.login();
+    }
+  });
+
+  ipcMain.handle("units-del-instance", async () => {
+      if (untisInstance != null) {
+        untisInstance = null;
+      }
+  });
+
+  ipcMain.handle("untis-logout", async () => {
+    if (untisInstance) {
+      await untisInstance.logout();
     }
   });
 

@@ -1,0 +1,52 @@
+:root {
+  /* Light mode colors */
+  --bg-color: #ebebeb;
+  --border-color: #d2d2d2;
+  --text-color: #0a0a0a;
+  --border-bg-color: #f9f9f9;
+  --bg-color-login: #e6562e;
+}
+
+@media (prefers-color-scheme: dark) {
+  /* Dark mode colors */
+  :root {
+    --bg-color: #141414;
+    --border-color: #181818;
+    --text-color: #f5f5f5;
+    --border-bg-color: #e7e7e7;
+    --bg-color-login: #cc4019;
+  }
+}
+
+body {
+  background-color: var(--bg-color);
+  overflow: hidden;
+  font-family: sans-serif;
+}
+
+h1,
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: var(--text-color);
+}
+
+p {
+  color: var(--text-color);
+}
+
+#taskbar {
+    display: flex;
+    align-items: center;
+}
+
+#logoutBtn {
+    margin-left: auto;
+    padding: 1.8vh 2.4vw;
+    font-size: 1rem;
+    background-color: var(--bg-color-login);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
