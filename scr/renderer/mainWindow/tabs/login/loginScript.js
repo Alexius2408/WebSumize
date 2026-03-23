@@ -19,9 +19,9 @@ const schoolNameInput = document.getElementById("schoolName");
 const schoolUrlInput = document.getElementById("schoolUrl");
 
 const texts = [
-  "Made with Cromium!",
+  "Made with Chromium!",
   "Made by Alexius2408!",
-  "Made for Students, Teachers, for EVERYONE!",
+  "Made for Students, for Teachers, for EVERYONE!",
   "Check out my GitHub: github.com/Alexius2408",
   "Everything at one place!",
   "Your timetable, your style!",
@@ -32,7 +32,7 @@ const textEl = document.getElementById("writer-content");
 let typingIndex = 0;
 let typingText = "";
 
-function tippen() {
+function type() {
   typingText = texts[Math.floor(Math.random() * texts.length)];
   typingIndex = 0;
   textEl.innerHTML = "";
@@ -44,6 +44,18 @@ function typeCharLoop() {
     textEl.innerHTML += typingText[typingIndex];
     typingIndex++;
     setTimeout(typeCharLoop, 50);
+  } else {
+    setTimeout(delCharLoop, 5000);
+  }
+}
+
+function delCharLoop() {
+  if (typingIndex > 0) {
+    typingIndex--;
+    textEl.innerHTML = typingText.slice(0, typingIndex);
+    setTimeout(delCharLoop, 30);
+  } else {
+    setTimeout(type, 1000);
   }
 }
 
@@ -72,4 +84,4 @@ button.addEventListener("click", async (event) => {
   }
 });
 
-tippen();
+type();
