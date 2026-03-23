@@ -40,21 +40,35 @@ h2 {
   color: var(--text-color);
 }
 
+h1 {
+  font-size: 2.5rem;
+}
+
 p {
   color: var(--text-color);
 }
 
+.container-wrapper {
+  position: relative;
+  height: 100vh;
+  width: 100%;
+}
+
 .container {
-  min-height: 100vh;
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 45%;
   display: flex;
   flex-direction: column;
-  margin-left: auto;
   justify-content: center;
   align-items: center;
+  padding-right: 2vw;
+  background-color: var(--bg-color);
+  overflow-y: auto;
 }
 
 .logo {
-  display: inline-block;
   padding: 25px;
   border-radius: 50%;
   background: radial-gradient(
@@ -65,6 +79,7 @@ p {
 }
 
 .logo img {
+  margin: 1rem;
   display: block;
   width: 20vw;
   max-width: 220px;
@@ -77,9 +92,7 @@ p {
 
 .form {
   width: 350px;
-  max-width: 90vw;
-  max-height: 90vh;
-  padding: 20px;
+  padding: 1rem;
   border-radius: 12px;
   background-color: var(--bg-color);
 }
@@ -94,15 +107,38 @@ p {
   margin: 4vh 0 0 0;
 }
 
-input {
+.input-box input {
   display: block;
   margin: 15px 0 0 0;
   width: 100%;
-  padding: 10px;
+  padding: 17px 13px;
   border: 1.5px solid var(--border-color);
-  border-radius: 12px;
+  border-radius: 8px;
   outline: none;
   background-color: var(--border-bg-color);
+}
+
+.input-box {
+  position: relative;
+}
+
+.input-box label {
+  pointer-events: none;
+  opacity: 0;
+  position: absolute;
+  top: 15px;
+  left: 13px;
+  transition: .3s;
+}
+
+.input-box input:focus + label{
+  opacity: 1;
+  top: -9px;
+  color: white;
+  background-color: var(--bg-color-login);
+  padding: 2px 7px;
+  border-radius: 12px;
+  font-size: 13px;
 }
 
 button {
@@ -110,9 +146,9 @@ button {
   width: 100%;
   background-color: var(--bg-color-login);
   color: var(--text-color);
-  padding: 10px;
+  padding: 15px 13px;
   border: 1.5px solid var(--border-color);
-  border-radius: 20px;
+  border-radius: 10px;
   outline: 0;
   cursor: pointer;
 }
@@ -123,22 +159,29 @@ button:hover {
 }
 
 #writer {
-  font-family: monospace;
-  font-size: 3rem;
-  white-space: pre-wrap;
-  max-width: 90vw;
-  margin: 0.75vw;
-  word-wrap: break-word;
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 55%;
+  display: block;
+  align-items: center;
+  align-self: center;
+  padding-left: 2vw;
   color: var(--text-color);
-  display: flex;
-  vertical-align: top;
-  padding-left: 1em;
-  text-indent: 0;
+  overflow: hidden;
+  font-family: monospace;
+  font-size: 4rem;
 }
 
-#cursor {
-  display: inline-block;
-  width: 0.75ch;
+#writer-content {
+  white-space: inline;
+}
+
+#writer-cursor {
+  display:  inline-block;
+  vertical-align: text-bottom;
+  white-space: pre;
   animation: blink 0.85s infinite;
 }
 
