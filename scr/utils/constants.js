@@ -14,6 +14,7 @@
 const GENERALLY = {
 APP_NAME: 'WebSumize',
 APP_VERSION: '0.1.0-beta',
+WEBSITE_URL: 'example.com'
 }
 
 module.exports = {
