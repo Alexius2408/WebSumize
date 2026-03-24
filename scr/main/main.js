@@ -9,7 +9,7 @@
  Description: Main process of WebSumize. Manages window creation, IPC, user authentication, and WebUntis data.
 */
 
-const { app, BrowserWindow, ipcMain, ipcRenderer } = require("electron");
+const { app, BrowserWindow, ipcMain, shell } = require("electron");
 const { getData, delData } = require("../services/storageService.js");
 const path = require("path");
 const { WebUntis } = require("webuntis");
@@ -27,6 +27,20 @@ function createWindow(login = true) {
       contextIsolation: false,
     },
   });
+
+  win.webContents.setWindowOpenHandler(({ url }) => {
+  shell.openExternal(url);
+  return { action: 'deny' };
+});
+
+win.webContents.on('will-navigate', (event, url) => {
+  // Only open external links in default browser
+  if (url !== win.webContents.getURL()) {
+    event.preventDefault();
+    shell.openExternal(url);
+  }
+});;
+
   if (login) {
     win.loadFile(
       path.join(__dirname, "../renderer/mainWindow/tabs/login/login.html"),
@@ -87,7 +101,7 @@ async function createUnitsInstance() {
 
 async function setupIcpHandelers() {
   ipcMain.handle("units-create-instance", async () => {
-      untisInstance = await createUnitsInstance();
+    untisInstance = await createUnitsInstance();
   });
 
   ipcMain.handle("untis-login", async () => {
@@ -97,9 +111,9 @@ async function setupIcpHandelers() {
   });
 
   ipcMain.handle("units-del-instance", async () => {
-      if (untisInstance != null) {
-        untisInstance = null;
-      }
+    if (untisInstance != null) {
+      untisInstance = null;
+    }
   });
 
   ipcMain.handle("untis-logout", async () => {
@@ -113,7 +127,6 @@ async function setupIcpHandelers() {
     return await untisInstance.validateSession();
   });
 
-
   ipcMain.handle("switch-window", async (event, windowName) => {
     if (!win) createWindow();
     win.loadFile(path.join(__dirname, windowName));
@@ -123,5 +136,4 @@ async function setupIcpHandelers() {
     if (!untisInstance) throw new Error("Not logged in to WebUntis.");
     return await untisInstance.getOwnTimetableForToday();
   });
-
 }
