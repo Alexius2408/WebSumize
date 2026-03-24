@@ -11,6 +11,7 @@
 
 const { setData } = require("../../../../services/storageService.js");
 const { ipcRenderer } = require("electron");
+const { GENERALLY } = require("../../../../utils/constants.js");
 
 const button = document.getElementById("loginButton");
 const usernameInput = document.getElementById("username");
@@ -25,15 +26,31 @@ const texts = [
   "Check out my GitHub: github.com/Alexius2408",
   "Everything at one place!",
   "Your timetable, your style!",
+  "Make it look like you want!",
+  "For Help check out " + GENERALLY.WEBSITE_URL,
 ];
 
+function logWindowSize() {
+  console.log(`Width: ${window.innerWidth}, Height: ${window.innerHeight}`);
+}
+
+// Log size initially
+logWindowSize();
+
+// Log size whenever the window is resized
+window.addEventListener('resize', logWindowSize);
 const textEl = document.getElementById("writer-content");
 
 let typingIndex = 0;
 let typingText = "";
 
 function type() {
-  typingText = texts[Math.floor(Math.random() * texts.length)];
+  lastTypedText = "";
+  typingText = "";
+  while (typingText == lastTypedText) {
+    typingText = texts[Math.floor(Math.random() * texts.length)];
+  }
+  lastTypedText = typingText;
   typingIndex = 0;
   textEl.innerHTML = "";
   typeCharLoop();
@@ -45,6 +62,13 @@ function typeCharLoop() {
     typingIndex++;
     setTimeout(typeCharLoop, 50);
   } else {
+    textEl.innerHTML = textEl.innerHTML.replace(
+      /((https?:\/\/)?([\w-]+\.)+([a-z]{2,})(\/[\w\-._~:/?#[\]@!$&'()*+,;=]*)?)/gi,
+      function (match) {
+        const url = match.startsWith("http") ? match : "https://" + match;
+        return `<a href="${url}" target="_blank" rel="noopener noreferrer">${match.replace(/^https?:\/\//, "")}</a>`;
+      },
+    );
     setTimeout(delCharLoop, 5000);
   }
 }
