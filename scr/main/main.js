@@ -10,10 +10,13 @@
 */
 
 const { app, BrowserWindow, ipcMain, shell } = require("electron");
-const { getData, delData } = require("../services/storageService.js");
 const path = require("path");
 const { WebUntis } = require("webuntis");
+const fs = require("fs");
+
+const { GENERALLY } = require("../utils/constants.js");
 const { update } = require("./update.js");
+const { getData } = require("../services/storageService.js");
 
 let untisInstance = null;
 let win = null;
@@ -29,24 +32,29 @@ function createWindow(login = true) {
   });
 
   win.webContents.setWindowOpenHandler(({ url }) => {
-  shell.openExternal(url);
-  return { action: 'deny' };
-});
-
-win.webContents.on('will-navigate', (event, url) => {
-  // Only open external links in default browser
-  if (url !== win.webContents.getURL()) {
-    event.preventDefault();
     shell.openExternal(url);
-  }
-});;
+    return { action: "deny" };
+  });
+
+  win.webContents.on("will-navigate", (event, url) => {
+    // Only open external links in default browser
+    if (url !== win.webContents.getURL()) {
+      event.preventDefault();
+      shell.openExternal(url);
+    }
+  });
 
   if (login) {
     win.loadFile(
-      path.join(__dirname, "../renderer/mainWindow/tabs/login/login.html"),
+      path.join(
+        GENERALLY.DIRNAME,
+        "../renderer/mainWindow/tabs/login/login.html",
+      ),
     );
   } else {
-    win.loadFile(path.join(__dirname, "../renderer/mainWindow/index.html"));
+    win.loadFile(
+      path.join(GENERALLY.DIRNAME, "../renderer/mainWindow/index.html"),
+    );
   }
 }
 
@@ -80,7 +88,7 @@ app.whenReady().then(async () => {
           createWindow();
         }
       } catch (err) {
-        console.error("Login failed:", err);
+        LogWrite("Problem with login (File: main.js, Line: 84-94) " + err.message);
         createWindow(true);
       }
     }
@@ -129,7 +137,7 @@ async function setupIcpHandelers() {
 
   ipcMain.handle("switch-window", async (event, windowName) => {
     if (!win) createWindow();
-    win.loadFile(path.join(__dirname, windowName));
+    win.loadFile(path.join(GENERALLY.DIRNAME, windowName));
   });
 
   ipcMain.handle("get-today-timetable", async () => {
@@ -137,3 +145,27 @@ async function setupIcpHandelers() {
     return await untisInstance.getOwnTimetableForToday();
   });
 }
+
+function createLogDir() {
+  // Create logs directory if it doesn't exist
+  if (!fs.existsSync(GENERALLY.LOG_DIR_PATH)) {
+    fs.mkdirSync(GENERALLY.LOG_DIR_PATH, { recursive: true });
+  }
+}
+function LogWrite(message) {
+  createLogDir();
+
+  const date = new Date();
+  const day = date.toLocaleDateString("sv-SE")
+  const time = date.toLocaleTimeString("sv-SE");
+  const logFilePath = path.join(GENERALLY.LOG_DIR_PATH, `${day}--Log`);
+  const shortMsg = message.split('\n')[0].slice(0, 150); // Get first line and limit to 150 chars
+
+  const logMessage = `[${day} ${time}]:  ${shortMsg}\n\n`;
+
+  fs.appendFileSync(logFilePath, logMessage, "utf8");
+}
+
+module.exports = {
+  LogWrite,
+};

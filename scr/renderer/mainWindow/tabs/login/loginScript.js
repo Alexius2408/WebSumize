@@ -21,13 +21,18 @@ const schoolUrlInput = document.getElementById("schoolUrl");
 
 const texts = [
   "Made with Chromium!",
-  "Made by Alexius2408!",
+  "Made by Alexius!",
   "Made for Students, for Teachers, for EVERYONE!",
   "Check out my GitHub: github.com/Alexius2408",
   "Everything at one place!",
   "Your timetable, your style!",
   "Make it look like you want!",
-  "For Help check out " + GENERALLY.WEBSITE_URL,
+  "For Help check out " + GENERALLY.HELP_WEBSITE_URL,
+  "If you doesn't liek the look, change it!",
+  "Future updates comming soon!",
+  "Hi, how are you?",
+  "Please log in to continue!",
+  "For errors check the log file for more details!",
 ];
 
 function logWindowSize() {
@@ -105,6 +110,7 @@ button.addEventListener("click", async (event) => {
     );
   } catch (err) {
     console.log("Failed to get timetable or login:", err);
+
   }
 });
 
