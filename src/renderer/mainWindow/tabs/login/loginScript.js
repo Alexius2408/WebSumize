@@ -21,7 +21,7 @@ const schoolUrlInput = document.getElementById("schoolUrl");
 
 const texts = [
   "Made with Chromium!",
-  "Made by Alexius!",
+  "Made with love by Alexius!",
   "Made for Students, for Teachers, for EVERYONE!",
   "Check out my GitHub: github.com/Alexius2408",
   "Everything at one place!",

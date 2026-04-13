@@ -17,7 +17,7 @@ const GENERALLY = {
 APP_NAME: 'WebSumize',
 APP_VERSION: '0.1.0-beta',
 HELP_WEBSITE_URL: 'example.com',
-DIRNAME: __dirname,
+USERROOT: __dirname,
 LOG_DIR_PATH: path.join(__dirname, "../logs"),
 };
 
