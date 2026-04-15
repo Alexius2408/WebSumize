@@ -9,18 +9,14 @@
  Description: Got all constants that are necessry for the App to run. It is in 1 File for easy changes through the application.
 */
 
-const path = require("path");
-
-
-// General application info
 const GENERALLY = {
-APP_NAME: 'WebSumize',
-APP_VERSION: '0.1.0-beta',
-HELP_WEBSITE_URL: 'example.com',
-USERROOT: __dirname,
-LOG_DIR_PATH: path.join(__dirname, "../logs"),
+	APP_NAME: 'WebSumize',
+	APP_VERSION: '0.1.0-beta',
+	HELP_WEBSITE_URL: 'example.com',
+	USERROOT: null,  // Gets changed when the App is ready (main.js)
+	LOG_DIR_PATH: null, // Gets changed when the App is ready (main.js)
 };
 
 module.exports = {
-    GENERALLY
-}
+	GENERALLY,
+};

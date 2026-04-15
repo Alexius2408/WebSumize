@@ -11,7 +11,7 @@ I only actively maintain the latest version of WebSumize.
 
 ---
 
-## Reporting 
+## Reporting
 
 If you find a security issue, you can report it either publicly or privately.
 
@@ -21,10 +21,10 @@ If you find a security issue, you can report it either publicly or privately.
 
 When reporting, please include:
 
-- What the issue is  
-- How to reproduce it  
-- Where it happens in the app  
-- Any relevant screenshots or logs  
+- What the issue is
+- How to reproduce it
+- Where it happens in the app
+- Any relevant screenshots or logs
 
 ---
 

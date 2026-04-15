@@ -7,16 +7,22 @@
   --bg-color-login: #e6562e;
 }
 
+.hidden {
+  display: none !important;
+}
+
 @media (prefers-color-scheme: dark) {
-  /* Dark mode colors */
+/* Dark mode colors*/
   :root {
     --bg-color: #1f1f1f;
     --border-color: #181818;
     --text-color: #f5f5f5;
+    --input-text-color: #2c2c2c;
     --border-bg-color: #e7e7e7;
     --bg-color-login: #cc4019;
   }
 }
+
 
 * {
   box-sizing: border-box;
@@ -153,6 +159,12 @@ button:hover {
   filter: brightness(115%);
   scale: 1.02;
 }
+
+.input-box input::placeholder {
+  color: var(--input-text-color);
+  opacity: 1;
+}
+
 @media screen and (min-width: 1465px) {
   .login-container {
     position: fixed;
@@ -227,4 +239,22 @@ button:hover {
   #writer-cursor {
     display: none;
   }
+}
+
+.loginFailed {
+  margin-top: 10px;
+  text-align: center;
+  width: 100%;
+  color: red;
+}
+
+.loginFailedLink {
+  color: #eb9b00;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.loginFailedLink:hover {
+  color: rgb(215, 165, 0);
+  text-decoration: underline;
 }

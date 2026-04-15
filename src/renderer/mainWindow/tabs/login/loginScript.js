@@ -24,27 +24,16 @@ const texts = [
   "Made with love by Alexius!",
   "Made for Students, for Teachers, for EVERYONE!",
   "Check out my GitHub: github.com/Alexius2408",
-  "Everything at one place!",
+  "Everything in one place!",
   "Your timetable, your style!",
   "Make it look like you want!",
-  "For Help check out " + GENERALLY.HELP_WEBSITE_URL,
-  "If you doesn't liek the look, change it!",
-  "Future updates comming soon!",
+  "For help, check out " + GENERALLY.HELP_WEBSITE_URL,
+  "If you don't like the look, change it!",
+  "Future updates coming soon!",
   "Hi, how are you?",
   "Please log in to continue!",
-  "For errors check the log file for more details!",
+  "For errors, check the log file for more details!",
 ];
-
-function logWindowSize() {
-  console.log(`Width: ${window.innerWidth}, Height: ${window.innerHeight}`);
-}
-
-// Log size initially
-logWindowSize();
-
-// Log size whenever the window is resized
-window.addEventListener('resize', logWindowSize);
-const textEl = document.getElementById("writer-content");
 
 let typingIndex = 0;
 let typingText = "";
@@ -52,7 +41,7 @@ let typingText = "";
 function type() {
   lastTypedText = "";
   typingText = "";
-  while (typingText == lastTypedText) {
+  while (typingText === lastTypedText) {
     typingText = texts[Math.floor(Math.random() * texts.length)];
   }
   lastTypedText = typingText;
@@ -94,6 +83,9 @@ button.addEventListener("click", async (event) => {
   const password = passwordInput.value;
   const schoolName = schoolNameInput.value;
   const schoolUrl = schoolUrlInput.value;
+  const loginFailed = document.getElementById("loginFailedInfo");
+  const loginFailedInfo = document.getElementById("loginFailedInfoLink");
+
   let data = JSON.stringify({
     username: String(username),
     password: String(password),
@@ -108,10 +100,19 @@ button.addEventListener("click", async (event) => {
       "switch-window",
       "../renderer/mainWindow/index.html",
     );
-  } catch (err) {
-    console.log("Failed to get timetable or login:", err);
 
+    loginFailed.classList.add("hidden")
+    loginFailedInfo.classList.add("hidden")
+  } catch (err) {
+    ipcRenderer.invoke("log-error", "(File: loginScript.js) " + err.message || String(err));
+    loginFailed.classList.remove("hidden")
+    loginFailedInfo.classList.remove("hidden")
   }
 });
 
-type();
+let textEl;
+
+document.addEventListener("DOMContentLoaded", () => {
+  textEl = document.getElementById("writer-content");
+  type();
+});

@@ -23,8 +23,8 @@ let win = null;
 
 function createWindow(login = true) {
   win = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 2000,
+    height: 1200,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
@@ -47,18 +47,20 @@ function createWindow(login = true) {
   if (login) {
     win.loadFile(
       path.join(
-        GENERALLY.DIRNAME,
-        "../renderer/mainWindow/tabs/login/login.html",
+        GENERALLY.USERROOT,
+        "src/renderer/mainWindow/tabs/login/login.html",
       ),
     );
   } else {
     win.loadFile(
-      path.join(GENERALLY.DIRNAME, "../renderer/mainWindow/index.html"),
+      path.join(GENERALLY.USERROOT, "src/renderer/mainWindow/index.html"),
     );
   }
 }
 
 app.whenReady().then(async () => {
+  GENERALLY.USERROOT = app.getAppPath()  // Chaning Const, beaucse the app is now ready
+  GENERALLY.LOG_DIR_PATH = path.join(app.getPath("userData"), "logs") // Chaning Const, beaucse the app is now ready
   setupIcpHandelers();
 
   if (untisInstance) {
@@ -88,7 +90,7 @@ app.whenReady().then(async () => {
           createWindow();
         }
       } catch (err) {
-        LogWrite("Problem with login (File: main.js, Line: 84-94) " + err.message);
+        LogWrite("Problem with login (File: main.js) " + err.message);
         createWindow(true);
       }
     }
@@ -137,13 +139,22 @@ async function setupIcpHandelers() {
 
   ipcMain.handle("switch-window", async (event, windowName) => {
     if (!win) createWindow();
-    win.loadFile(path.join(GENERALLY.DIRNAME, windowName));
+    win.loadFile(path.join(GENERALLY.USERROOT, windowName));
   });
 
   ipcMain.handle("get-today-timetable", async () => {
     if (!untisInstance) throw new Error("Not logged in to WebUntis.");
     return await untisInstance.getOwnTimetableForToday();
   });
+
+  ipcMain.handle("get-app-path", (event, arguemnt) => {
+    if (arguemnt === "") return app.getAppPath();
+    return app.getAppPath(arguemnt);
+  });
+
+  ipcMain.handle("log-error", (event, msg) => {
+  LogWrite(msg);
+});
 }
 
 function createLogDir() {
@@ -158,14 +169,10 @@ function LogWrite(message) {
   const date = new Date();
   const day = date.toLocaleDateString("sv-SE")
   const time = date.toLocaleTimeString("sv-SE");
-  const logFilePath = path.join(GENERALLY.LOG_DIR_PATH, `${day}--Log`);
-  const shortMsg = message.replace('\n', ' ').slice(0, 150); // limit to 150 chars
+  const logFilePath = path.join(GENERALLY.LOG_DIR_PATH, `${day}--Log.txt`);
+  const shortMsg = message.replace('\n', ' ').slice(0, 200); // limit to 200 chars
 
   const logMessage = `[${day} ${time}]:  ${shortMsg}\n\n`;
 
   fs.appendFileSync(logFilePath, logMessage, "utf8");
 }
-
-module.exports = {
-  LogWrite,
-};
