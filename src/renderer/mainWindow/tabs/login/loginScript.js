@@ -19,6 +19,18 @@ const passwordInput = document.getElementById("password");
 const schoolNameInput = document.getElementById("schoolName");
 const schoolUrlInput = document.getElementById("schoolUrl");
 
+const loginFailed = document.getElementById("loginFailedInfo");
+const loginFailedInfo = document.getElementById("loginFailedInfoLink");
+const inputs = document.querySelectorAll(".input-");
+const loader = document.getElementById("loaderAnim")
+
+button.classList.remove("loginButtonLoading");
+loader.classList.add("hidden");
+button.firstChild.textContent = "LOGIN"
+loginFailed.classList.add("hidden")
+loginFailedInfo.classList.add("hidden")
+
+
 const texts = [
   "Made with Chromium!",
   "Made with love by Alexius!",
@@ -77,14 +89,27 @@ function delCharLoop() {
   }
 }
 
+inputs.forEach(input => {
+  input.addEventListener("input", () => {
+    if (input.value.trim() === "") {
+      console.log("Empty")
+      button.classList.add("noPush")
+    } else {
+      console.log("hide")
+      button.classList.remove("noPush")
+      loginFailed.classList.add("hidden");
+      loginFailedInfo.classList.add("hidden");
+    }
+  });
+});
+
 button.addEventListener("click", async (event) => {
+  if (!("noPush" in button.classList)) { 
   event.preventDefault();
   const username = usernameInput.value;
   const password = passwordInput.value;
   const schoolName = schoolNameInput.value;
   const schoolUrl = schoolUrlInput.value;
-  const loginFailed = document.getElementById("loginFailedInfo");
-  const loginFailedInfo = document.getElementById("loginFailedInfoLink");
 
   let data = JSON.stringify({
     username: String(username),
@@ -94,6 +119,9 @@ button.addEventListener("click", async (event) => {
   });
   await setData(data);
   try {
+    button.firstChild.textContent = ""
+    button.classList.add("loginButtonLoading");
+    loader.classList.remove("hidden");
     await ipcRenderer.invoke("units-create-instance");
     await ipcRenderer.invoke("untis-login");
     await ipcRenderer.invoke(
@@ -101,13 +129,20 @@ button.addEventListener("click", async (event) => {
       "../renderer/mainWindow/index.html",
     );
 
+    button.classList.remove("loginButtonLoading");
+    loader.classList.add("hidden");
+    button.firstChild.textContent = "LOGIN"
     loginFailed.classList.add("hidden")
     loginFailedInfo.classList.add("hidden")
   } catch (err) {
+    button.firstChild.textContent = "LOGIN"
+    button.classList.remove("loginButtonLoading");
+    loader.classList.add("hidden");
     ipcRenderer.invoke("log-error", "(File: loginScript.js) " + err.message || String(err));
     loginFailed.classList.remove("hidden")
     loginFailedInfo.classList.remove("hidden")
   }
+}
 });
 
 let textEl;

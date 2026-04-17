@@ -27,28 +27,31 @@
             <h2>Login to continue</h2>
             <div class="input-box">
               <input
+                class="input"
                 type="text"
                 name=""
-                placeholder="Enter username"
+                placeholder="john.doe"
                 id="username"
               />
-              <label>Username</label>
+              <label>School Username</label>
             </div>
             <div class="input-box">
               <input
+                class="input"
                 type="password"
                 name=""
-                placeholder="Enter Password"
+                placeholder="SchoolPassword123"
                 id="password"
                 required
               />
-              <label>Password</label>
+              <label>School Password</label>
             </div>
             <div class="input-box">
               <input
+                class="input"
                 type="text"
                 name=""
-                placeholder="Enter School name"
+                placeholder="my-school"
                 id="schoolName"
                 required
               />
@@ -56,17 +59,21 @@
             </div>
             <div class="input-box">
               <input
+                class="input"
                 type="text"
                 name=""
-                placeholder="Enter School Url"
+                placeholder="www.myschool.com"
                 id="schoolUrl"
                 required
               />
               <label>School Url</label>
             </div>
             <p id="loginFailedInfo" class="hidden loginFailed">Login Failed</p>
-            <p id="loginFailedInfoLink" class="hidden loginFailed">Check <a class="loginFailedLink" href="#">here</a> if the issue happens more often.</p>
-            <button id="loginButton">LOGIN</button>
+            <p id="loginFailedInfoLink" class="hidden loginFailed">
+              Check <a class="loginFailedLink" href="#">here</a> if the issue
+              happens more often.
+            </p>
+            <button id="loginButton" type="button">LOGIN<span class="loader hidden" id="loaderAnim"></span></button>
           </form>
         </div>
       </div>
