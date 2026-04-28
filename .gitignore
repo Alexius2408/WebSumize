@@ -142,3 +142,10 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+
+# Log Files
+*--Log.txt
+
+# allow src/logs to be tracked
+!src/logs/
+!src/logs/**

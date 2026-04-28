@@ -30,7 +30,8 @@ When reporting, please include:
 
 ## Response Time
 
-I usually respond within a few days, or at most within a month, and if I don’t forget, I will let you know once the security issue is fixed.
+- I usually respond within a few days, or at most within a month  if I don’t forget.
+- I will let you know once the security issue is fixed.
 
 ---
 
