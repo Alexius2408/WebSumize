@@ -3,9 +3,11 @@
   --bg-color: #e0e0e0;
   --border-color: #d2d2d2;
   --text-color: #0a0a0a;
+  --input-text-color: #808080;
   --border-bg-color: #f9f9f9;
   --bg-color-login: #e6562e;
   --bg-color-login-loading: #e6562e69;
+  font-size: clamp(14px, 0.9vw + 10px, 18px);
 }
 
 .hidden {
@@ -18,7 +20,7 @@
     --bg-color: #1f1f1f;
     --border-color: #181818;
     --text-color: #f5f5f5;
-    --input-text-color: rgb(160, 160, 160);
+    --input-text-color: #bcbcbc;
     --border-bg-color: #e7e7e7;
     --bg-color-login: #cc4019;
     --bg-color-login-loading: #cc401965;
@@ -84,9 +86,7 @@ p {
 .logo img {
   margin: 1rem;
   display: block;
-  width: 20vw;
-  max-width: 220px;
-  min-width: 120px;
+  width: clamp(120px, 18vw, 220px);
   height: auto;
   object-fit: contain;
   filter: brightness(80%);
@@ -94,7 +94,7 @@ p {
 }
 
 .form {
-  width: 350px;
+  width: clamp(300px, 28vw, 420px);
   padding: 1rem;
   border-radius: 12px;
   background-color: var(--bg-color);
@@ -114,7 +114,7 @@ p {
   display: block;
   margin: 15px 0 0 0;
   width: 100%;
-  padding: 17px 13px;
+  padding: clamp(12px, 1.2vw, 17px) clamp(10px, 1vw, 13px);
   border: 1.5px solid var(--border-color);
   border-radius: 8px;
   outline: none;
@@ -123,6 +123,16 @@ p {
 
 .input-box {
   position: relative;
+}
+
+#passwordvisibility {
+  position: absolute;
+  right: 13px;
+  top: 55%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: var(--text-color);
+  user-select: none;
 }
 
 .input-box label {
@@ -149,7 +159,7 @@ button {
   width: 100%;
   background-color: var(--bg-color-login);
   color: var(--text-color);
-  padding: 15px 13px;
+  padding: clamp(12px, 1.2vw, 15px) clamp(10px, 1vw, 13px);
   border: 1.5px solid var(--border-color);
   border-radius: 10px;
   outline: 0;
@@ -168,6 +178,7 @@ button:hover:not(.loginButtonLoading) {
 
 @media screen and (min-width: 1465px) {
   .login-container {
+
     position: fixed;
     right: 0;
     top: 0;
@@ -191,7 +202,7 @@ button:hover:not(.loginButtonLoading) {
     align-items: center;
     align-self: center;
     padding-left: 2vw;
-    color: #ffffff4b;
+    color: var(--text-color);
     overflow: hidden;
     font-family: monospace;
     font-size: 4rem;
@@ -269,6 +280,8 @@ button:hover:not(.loginButtonLoading) {
   cursor: wait;
 }
 
+
+
 /* https://cssloaders.github.io/ */
 
 .loader, .loader:before, .loader:after {
@@ -307,4 +320,3 @@ button:hover:not(.loginButtonLoading) {
   0%, 80%, 100% { box-shadow: 0 2.5em 0 -1.3em }
   40% { box-shadow: 0 2.5em 0 0 }
 }
-    

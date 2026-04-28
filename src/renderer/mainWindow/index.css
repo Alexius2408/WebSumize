@@ -1,8 +1,11 @@
 :root {
   /* Light mode colors */
+  --input-text-color: #808080;
   --bg-color: #ebebeb;
+  --bg-color-for-bttns: #efeeee9e ;
   --border-color: #d2d2d2;
   --text-color: #0a0a0a;
+  --text-hover: #232323;
   --border-bg-color: #f9f9f9;
   --bg-color-login: #e6562e;
 }
@@ -11,8 +14,10 @@
   /* Dark mode colors */
   :root {
     --bg-color: #141414;
+    --bg-color-for-bttns: #2525259e;
     --border-color: #181818;
     --text-color: #f5f5f5;
+    --text-hover: #3e3e3e;
     --border-bg-color: #e7e7e7;
     --bg-color-login: #cc4019;
   }
@@ -36,17 +41,65 @@ p {
 }
 
 #taskbar {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 }
 
-#logoutBtn {
-    margin-left: auto;
-    padding: 1.8vh 2.4vw;
-    font-size: 1rem;
-    background-color: var(--bg-color-login);
-    color: white;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
+#dropdownBtn {
+  padding: 1.8vh 2.4vw;
+  font-size: 1rem;
+  background-color: var(--input-text-color);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+#lines {
+  margin-right: 10px;
+  margin-left: auto;
+  border: none;
+  width: 5dvw;
+  height: 5dvh;
+  transition: transform 0.25s ease;
+  cursor: pointer;
+}
+
+.dropdownmenu {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdownmenu-content {
+  display: none;
+  position: absolute;
+  background-color: var(--bg-color);
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0,0 , 0.2);
+  z-index: 1;
+  border-radius: 7px;
+  overflow: hidden;
+}
+
+.dropdownmenu-content button {
+  color: var(--text-color);
+  padding: 12px 16px;
+  background: transparent;
+  border: none;
+  text-align: left;
+  width: 100%;
+  display: block;
+  cursor: pointer;
+}
+
+.dropdownmenu-content button:hover {
+  background-color: var(--text-hover);
+}
+
+.dropdownmenu:hover .dropdownmenu-content {
+  display: block;
+}
+
+.dropdownmenu:hover #lines {
+  transform: rotate(90deg);
 }

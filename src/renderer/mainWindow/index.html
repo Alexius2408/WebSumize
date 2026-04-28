@@ -9,7 +9,27 @@
   <body>
     <div id="taskbar">
       <h1>WebSumize</h1>
-      <button id="logoutBtn">Logout</button>
+      <div class="dropdownmenu">
+        <svg
+          id="lines"
+          xmlns="http://www.w3.org/2000/svg"
+          height="24px"
+          viewBox="0 -960 960 960"
+          width="24px"
+          fill="#e3e3e3"
+        >
+          <path
+            d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z"
+          />
+        </svg>
+        
+        <div class="dropdownmenu-content">
+          <button id="Settings" class="dropdownBtn">Settings</button>
+          <button id="export" class="dropdownBtn">Export Data</button>
+          <button id="import" class="dropdownBtn">Import Data</button>
+          <button id="logoutBtn" class="dropdownBtn">Logout</button>
+        </div>
+      </div>
     </div>
     <script src="./index.js"></script>
   </body>

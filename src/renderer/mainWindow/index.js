@@ -23,13 +23,14 @@ async function loadTimetable() {
 }
 
 logoutbutton.addEventListener("click", async (event) => {
+  console.log("Logout")
   event.preventDefault();
   await ipcRenderer.invoke("untis-logout");
   await ipcRenderer.invoke("units-del-instance");
   await delData();
   await ipcRenderer.invoke(
     "switch-window",
-    "../renderer/mainWindow/tabs/login/login.html",
+    "src/renderer/mainWindow/tabs/login/login.html",
   );
 });
 
