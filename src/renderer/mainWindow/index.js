@@ -16,9 +16,10 @@ const { ipcRenderer } = window.require("electron");
 const { delData } = require("../../services/storageService.js");
 
 const logoutbutton = document.getElementById("logoutBtn");
+const refreshButton = document.getElementById("refreshBtn")
 
-async function loadTimetable() {
-  const timetable = await ipcRenderer.invoke("get-today-timetable");
+async function loadTimetable(refresh = false) {
+  const timetable = await ipcRenderer.invoke("get-today-timetable", refresh);
   timetabletext.textContent = JSON.stringify(timetable);
 }
 
@@ -33,3 +34,7 @@ logoutbutton.addEventListener("click", async (event) => {
 });
 
 loadTimetable();
+
+refreshButton.addEventListener("click", async (event) => {
+  loadTimetable(true)
+})

@@ -2,7 +2,7 @@
   /* Light mode colors */
   --input-text-color: #808080;
   --bg-color: #ebebeb;
-  --bg-color-for-bttns: #efeeee9e ;
+  --bg-color-for-bttns: #efeeee9e;
   --border-color: #d2d2d2;
   --text-color: #0a0a0a;
   --text-hover: #232323;
@@ -75,7 +75,7 @@ p {
   position: absolute;
   background-color: var(--bg-color);
   min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0, 0,0 , 0.3);
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.3);
   z-index: 1;
   border-radius: 7px;
   overflow: hidden;
@@ -103,4 +103,25 @@ p {
 
 .dropdownmenu:hover #lines {
   transform: rotate(90deg);
+}
+
+.material-symbols-outlined {
+  font-variation-settings:
+    "FILL" 0,
+    "wght" 400,
+    "GRAD" 0,
+    "opsz" 24;
+    color: var(--text-color);
+    transform: scaleX(-1);
+    transition: rotate 0.43s;
+    rotate: 0deg;
+    cursor: pointer;
+    display: block;
+    margin-top: 20px;
+    margin-left: 97%;
+}
+
+.material-symbols-outlined:hover {
+  transition: rotate 0.3s;
+  rotate: -60deg;
 }

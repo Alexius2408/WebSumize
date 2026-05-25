@@ -152,3 +152,6 @@ vite.config.ts.timestamp-*
 
 # ignore TODO file
 TODO.md
+
+# ignore Ideas
+IdeasForSettings.md

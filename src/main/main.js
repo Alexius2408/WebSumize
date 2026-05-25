@@ -9,14 +9,27 @@
  Description: Main process of WebSumize. Manages window creation, IPC, user authentication, and WebUntis data.
 */
 
-const { app, BrowserWindow, ipcMain, shell, Tray, Menu, screen,} = require("electron");
+const {
+  app,
+  BrowserWindow,
+  ipcMain,
+  shell,
+  Tray,
+  Menu,
+  screen,
+} = require("electron");
 const path = require("path");
 const { WebUntis } = require("webuntis");
 const fs = require("fs");
 
-const { GENERALLY, initalizeNullVariables } = require("../utils/constants.js");
+const {
+  GENERALLY,
+  PATHS,
+  initalizeNullVariables,
+} = require("../utils/constants.js");
 const { update } = require("./update.js");
 const { getData, delData } = require("../services/storageService.js");
+const { getTodayTimetable, getAnyTimetable, getHomework, getExams } = require("../api/webUnitsAPI.js");
 
 let untisInstance = null;
 let win = null;
@@ -61,33 +74,41 @@ function createWindow(login = true, mainWindow = true) {
   win.on("closed", () => {
     win = null;
   });
+
   if (login) {
     win.loadFile(
       path.join(
-        GENERALLY.USERROOT,
+        PATHS.USERROOT,
         "src/renderer/mainWindow/tabs/login/login.html",
       ),
     );
   } else if (mainWindow) {
     win.loadFile(
-      path.join(GENERALLY.USERROOT, "src/renderer/mainWindow/index.html"),
+      path.join(PATHS.USERROOT, "src/renderer/mainWindow/index.html"),
     );
   } else {
     win.loadFile(
-      path.join(GENERALLY.USERROOT, "src/renderer/miniWindow/mini.html"),
+      path.join(PATHS.USERROOT, "src/renderer/miniWindow/mini.html"),
     );
   }
 }
 
 function createTray() {
-  tray = new Tray(GENERALLY.ICON_PATH);
+  tray = new Tray(PATHS.ICON_PATH);
   let singleClickTimer = null;
 
   const menu = Menu.buildFromTemplate([
-    { label: "Open Main Window", click: async () => createWindow(!await hasUserInstance(), true) },
-    { label: "Open Mini Window", click: async () => createWindow(!await hasUserInstance(), await hasUserInstance()) },
-    { label: "Logout", click: () => userWipeEverything()},
-    { label: "Quit", click: () => app.quit() },
+    {
+      label: "Open Main Window",
+      click: async () => createWindow(!(await hasUserInstance()), true),
+    },
+    {
+      label: "Open Mini Window",
+      click: async () =>
+        createWindow(!(await hasUserInstance()), !(await hasUserInstance())),
+    },
+    { label: "Logout", click: () => userWipeEverything() },
+    { label: "Exit", click: () => app.quit() },
   ]);
 
   tray.setContextMenu(menu);
@@ -102,7 +123,7 @@ function createTray() {
     if (win) {
       win.show();
     } else {
-      createWindow(!await hasUserInstance());
+      createWindow(!(await hasUserInstance()));
     }
   });
 
@@ -112,7 +133,7 @@ function createTray() {
     }
 
     singleClickTimer = setTimeout(async () => {
-      createWindow(!await hasUserInstance(), !await hasUserInstance());
+      createWindow(!(await hasUserInstance()), !(await hasUserInstance()));
       singleClickTimer = null;
     }, 300);
   });
@@ -205,13 +226,13 @@ async function setupIcpHandelers() {
       createWindow(true);
     } else {
       if (!win) createWindow();
-      win.loadFile(path.join(GENERALLY.USERROOT, windowName));
+      win.loadFile(path.join(PATHS.USERROOT, windowName));
     }
   });
 
-  ipcMain.handle("get-today-timetable", async () => {
+  ipcMain.handle("get-today-timetable", async (event, refresh) => {
     if (!untisInstance) throw new Error("Not logged in to WebUntis.");
-    return await untisInstance.getOwnTimetableForToday();
+    return await getTodayTimetable(untisInstance, refresh);
   });
 
   ipcMain.handle("get-app-path", (event, arguemnt) => {
@@ -232,8 +253,8 @@ async function userWipeEverything() {
 
 function createLogDir() {
   // Create logs directory if it doesn't exist
-  if (!fs.existsSync(GENERALLY.LOG_DIR_PATH)) {
-    fs.mkdirSync(GENERALLY.LOG_DIR_PATH, { recursive: true });
+  if (!fs.existsSync(PATHS.LOG_DIR_PATH)) {
+    fs.mkdirSync(PATHS.LOG_DIR_PATH, { recursive: true });
   }
 }
 function LogWrite(message) {
@@ -242,7 +263,7 @@ function LogWrite(message) {
   const date = new Date();
   const day = date.toLocaleDateString("sv-SE");
   const time = date.toLocaleTimeString("sv-SE");
-  const logFilePath = path.join(GENERALLY.LOG_DIR_PATH, `${day}--Log.log`);
+  const logFilePath = path.join(PATHS.LOG_DIR_PATH, `${day}--Log.log`);
   const shortMsg = message.replace("\n", " ").slice(0, 200); // limit to 200 chars
 
   const logMessage = `[${day} ${time}]:  ${shortMsg}\n\n`;

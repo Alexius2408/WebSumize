@@ -7,6 +7,7 @@
 
  File: constants.js
  Description: Got all constants that are necessry for the App to run. It is in 1 File for easy changes through the application.
+              Some variables are set to null, that is because they can only be set when the app is ready. They get changed in initalizeNullVariables().
 */
 
 const path = require("path");
@@ -18,9 +19,14 @@ const GENERALLY = {
   APP_NAME: "WebSumize",
   APP_VERSION: "0.1.0-beta",
   HELP_WEBSITE_URL: "example.com",
-  USERROOT: null, // Gets changed when the App is ready
-  LOG_DIR_PATH: null, // Gets changed when the App is ready
+};
+
+const PATHS = {
+  USERROOT: null,
+  LOG_DIR_PATH: null,
   ICON_PATH: getTrayIcon(),
+  CACHE_DIR: null,
+  TIMETABLE_CACHE_FILE: null,
 };
 
 async function initalizeNullVariables(app) {
@@ -32,8 +38,12 @@ async function initalizeNullVariables(app) {
   GENERALLY.SCREEN_HEIGHT = display.workAreaSize.height;
 
   // User Root and log file path
-  GENERALLY.USERROOT = app.getAppPath();
-  GENERALLY.LOG_DIR_PATH = path.join(app.getPath("userData"), "logs");
+  PATHS.USERROOT = app.getAppPath();
+  PATHS.LOG_DIR_PATH = path.join(app.getPath("userData"), "logs");
+
+  PATHS.CACHE_DIR = path.join(app.getPath("userData"), "cache");
+  PATHS.TIMETABLE_CACHE_FILE = path.join(PATHS.CACHE_DIR, "today-timetable.json");
+  console.log(PATHS.CACHE_DIR)
 }
 
 function getTrayIcon() {
@@ -50,5 +60,6 @@ function getTrayIcon() {
 
 module.exports = {
   GENERALLY,
-  initalizeNullVariables
+  PATHS,
+  initalizeNullVariables,
 };

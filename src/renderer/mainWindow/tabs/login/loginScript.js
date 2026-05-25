@@ -26,9 +26,11 @@ const loader = document.getElementById("loaderAnim");
 const passwordVisibilityToggle = document.getElementById("passwordvisibility");
 
 passwordVisibilityToggle.addEventListener("click", () => {
-    const isPassword = passwordInput.getAttribute("type") === "password";
-    passwordInput.setAttribute("type", isPassword ? "text" : "password");
-    passwordVisibilityToggle.textContent = isPassword ? "visibility_off" : "visibility";
+  const isPassword = passwordInput.getAttribute("type") === "password";
+  passwordInput.setAttribute("type", isPassword ? "text" : "password");
+  passwordVisibilityToggle.textContent = isPassword
+    ? "visibility_off"
+    : "visibility";
 });
 
 button.classList.remove("loginButtonLoading");
@@ -50,6 +52,10 @@ const texts = [
   "Future updates coming soon!",
   "Please log in to continue!",
   "For errors, check the log file for more details!",
+  "Use the tray icon to navigate.",
+  "Left-click the tray icon to open a small window.",
+  "Double-click the tray icon to open the main page.",
+  "Right-click the tray icon for quick access.",
 ];
 
 let typingIndex = 0;
@@ -101,10 +107,8 @@ function delCharLoop() {
 inputs.forEach((input) => {
   input.addEventListener("input", () => {
     if (input.value.trim() === "") {
-      console.log("Empty");
       button.classList.add("noPush");
     } else {
-      console.log("hide");
       button.classList.remove("noPush");
       loginFailed.classList.add("hidden");
       loginFailedInfo.classList.add("hidden");
@@ -121,7 +125,6 @@ button.addEventListener("click", async (event) => {
     const schoolUrl = schoolUrlInput.value
       .replace(/^https?:\/\//i, "")
       .replace(/^www\./i, "");
-    console.log(schoolUrl);
     let data = JSON.stringify({
       username: String(username),
       password: String(password),

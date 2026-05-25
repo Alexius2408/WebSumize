@@ -8,3 +8,10 @@
  File: mini.js
  Description:
 */
+
+// Close mini window when Escape key is pressed
+document.addEventListener("keyup", (event) => {
+  if (event.key === "Escape") {
+    window.close();
+  }
+});
