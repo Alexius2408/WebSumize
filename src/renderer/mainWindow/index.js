@@ -23,7 +23,6 @@ async function loadTimetable() {
 }
 
 logoutbutton.addEventListener("click", async (event) => {
-  event.preventDefault();
   await ipcRenderer.invoke("untis-logout");
   await ipcRenderer.invoke("units-del-instance");
   await delData();

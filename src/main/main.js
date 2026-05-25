@@ -9,26 +9,34 @@
  Description: Main process of WebSumize. Manages window creation, IPC, user authentication, and WebUntis data.
 */
 
-const { app, BrowserWindow, ipcMain, shell } = require("electron");
+const { app, BrowserWindow, ipcMain, shell, Tray, Menu, screen,} = require("electron");
 const path = require("path");
 const { WebUntis } = require("webuntis");
 const fs = require("fs");
 
-const { GENERALLY } = require("../utils/constants.js");
+const { GENERALLY, initalizeNullVariables } = require("../utils/constants.js");
 const { update } = require("./update.js");
-const { getData } = require("../services/storageService.js");
+const { getData, delData } = require("../services/storageService.js");
 
 let untisInstance = null;
 let win = null;
+let tray;
+let trayLeftClicked = 0;
 
-function createWindow(login = true) {
+function createWindow(login = true, mainWindow = true) {
   win = new BrowserWindow({
-    width: 2000,
-    height: 1200,
+    width: mainWindow
+      ? GENERALLY.SCREEN_WIDTH
+      : Math.floor(GENERALLY.SCREEN_WIDTH * 0.33),
+    height: mainWindow
+      ? GENERALLY.SCREEN_HEIGHT
+      : Math.floor(GENERALLY.SCREEN_HEIGHT * 0.68),
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
     },
+    resizable: mainWindow,
+    frame: mainWindow,
   });
 
   win.webContents.setWindowOpenHandler(({ url }) => {
@@ -44,6 +52,15 @@ function createWindow(login = true) {
     }
   });
 
+  win.on("blur", () => {
+    if (!mainWindow) {
+      win.close();
+    }
+  });
+
+  win.on("closed", () => {
+    win = null;
+  });
   if (login) {
     win.loadFile(
       path.join(
@@ -51,27 +68,64 @@ function createWindow(login = true) {
         "src/renderer/mainWindow/tabs/login/login.html",
       ),
     );
-  } else {
+  } else if (mainWindow) {
     win.loadFile(
       path.join(GENERALLY.USERROOT, "src/renderer/mainWindow/index.html"),
+    );
+  } else {
+    win.loadFile(
+      path.join(GENERALLY.USERROOT, "src/renderer/miniWindow/mini.html"),
     );
   }
 }
 
+function createTray() {
+  tray = new Tray(GENERALLY.ICON_PATH);
+  let singleClickTimer = null;
+
+  const menu = Menu.buildFromTemplate([
+    { label: "Open Main Window", click: async () => createWindow(!await hasUserInstance(), true) },
+    { label: "Open Mini Window", click: async () => createWindow(!await hasUserInstance(), await hasUserInstance()) },
+    { label: "Logout", click: () => userWipeEverything()},
+    { label: "Quit", click: () => app.quit() },
+  ]);
+
+  tray.setContextMenu(menu);
+  tray.setToolTip("WebSumize");
+
+  tray.on("double-click", async () => {
+    if (singleClickTimer) {
+      clearTimeout(singleClickTimer);
+      singleClickTimer = null;
+    }
+
+    if (win) {
+      win.show();
+    } else {
+      createWindow(!await hasUserInstance());
+    }
+  });
+
+  tray.on("click", () => {
+    if (singleClickTimer) {
+      clearTimeout(singleClickTimer);
+    }
+
+    singleClickTimer = setTimeout(async () => {
+      createWindow(!await hasUserInstance(), !await hasUserInstance());
+      singleClickTimer = null;
+    }, 300);
+  });
+}
+
 app.whenReady().then(async () => {
-  GENERALLY.USERROOT = app.getAppPath()  // Chaning Const, beaucse the app is now ready
-  GENERALLY.LOG_DIR_PATH = path.join(app.getPath("userData"), "logs") // Chaning Const, beaucse the app is now ready
+  await initalizeNullVariables(app);
   setupIcpHandelers();
+  createTray();
 
   if (untisInstance) {
     update();
   }
-
-  app.on("window-all-closed", () => {
-    if (process.platform !== "darwin") {
-      app.quit();
-    }
-  });
 
   untisInstance = await createUnitsInstance();
   if (untisInstance == null) {
@@ -96,6 +150,15 @@ app.whenReady().then(async () => {
     }
   }
 });
+
+app.on("window-all-closed", () => {
+  // Don't quit the app if all windows are closed
+  // User can quit via the tray menu "Quit" option
+});
+
+async function hasUserInstance() {
+  return untisInstance != null;
+}
 
 async function createUnitsInstance() {
   let data = await getData();
@@ -138,8 +201,12 @@ async function setupIcpHandelers() {
   });
 
   ipcMain.handle("switch-window", async (event, windowName) => {
-    if (!win) createWindow();
-    win.loadFile(path.join(GENERALLY.USERROOT, windowName));
+    if (untisInstance === null) {
+      createWindow(true);
+    } else {
+      if (!win) createWindow();
+      win.loadFile(path.join(GENERALLY.USERROOT, windowName));
+    }
   });
 
   ipcMain.handle("get-today-timetable", async () => {
@@ -153,8 +220,14 @@ async function setupIcpHandelers() {
   });
 
   ipcMain.handle("log-error", (event, msg) => {
-  LogWrite(msg);
-});
+    LogWrite(msg);
+  });
+}
+
+async function userWipeEverything() {
+  untisInstance.logout();
+  untisInstance = null;
+  await delData();
 }
 
 function createLogDir() {
@@ -167,10 +240,10 @@ function LogWrite(message) {
   createLogDir();
 
   const date = new Date();
-  const day = date.toLocaleDateString("sv-SE")
+  const day = date.toLocaleDateString("sv-SE");
   const time = date.toLocaleTimeString("sv-SE");
   const logFilePath = path.join(GENERALLY.LOG_DIR_PATH, `${day}--Log.log`);
-  const shortMsg = message.replace('\n', ' ').slice(0, 200); // limit to 200 chars
+  const shortMsg = message.replace("\n", " ").slice(0, 200); // limit to 200 chars
 
   const logMessage = `[${day} ${time}]:  ${shortMsg}\n\n`;
 
