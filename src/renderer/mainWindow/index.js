@@ -9,6 +9,8 @@
  Description: This is the entry point for the main window. It shows the timetable for the current day.
 */
 
+const timetabletext = document.getElementById("timetabletext")
+
 const { ipcRenderer } = window.require("electron");
 
 const { delData } = require("../../services/storageService.js");
@@ -17,13 +19,10 @@ const logoutbutton = document.getElementById("logoutBtn");
 
 async function loadTimetable() {
   const timetable = await ipcRenderer.invoke("get-today-timetable");
-  const txt = document.createElement("p");
-  txt.textContent = JSON.stringify(timetable);
-  document.body.appendChild(txt);
+  timetabletext.textContent = JSON.stringify(timetable);
 }
 
 logoutbutton.addEventListener("click", async (event) => {
-  console.log("Logout")
   event.preventDefault();
   await ipcRenderer.invoke("untis-logout");
   await ipcRenderer.invoke("units-del-instance");

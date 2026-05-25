@@ -144,8 +144,11 @@ vite.config.ts.timestamp-*
 .vite/
 
 # Log Files
-*--Log.txt
+*--Log.log
 
 # allow src/logs to be tracked
 !src/logs/
 !src/logs/**
+
+# ignore TODO file
+TODO.md
