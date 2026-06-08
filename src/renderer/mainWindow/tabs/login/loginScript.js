@@ -13,7 +13,7 @@ const { setData } = require("../../../../services/storageService.js");
 const { ipcRenderer } = require("electron");
 const { GENERALLY } = require("../../../../utils/constants.js");
 
-const button = document.getElementById("loginButton");
+const loginButton = document.getElementById("loginButton");
 const usernameInput = document.getElementById("username");
 const passwordInput = document.getElementById("password");
 const schoolNameInput = document.getElementById("schoolName");
@@ -21,9 +21,10 @@ const schoolUrlInput = document.getElementById("schoolUrl");
 
 const loginFailed = document.getElementById("loginFailedInfo");
 const loginFailedInfo = document.getElementById("loginFailedInfoLink");
-const inputs = document.querySelectorAll(".input-");
+const inputs = document.querySelectorAll(".input");
 const loader = document.getElementById("loaderAnim");
 const passwordVisibilityToggle = document.getElementById("passwordvisibility");
+let isSubmitting = false;
 
 passwordVisibilityToggle.addEventListener("click", () => {
   const isPassword = passwordInput.getAttribute("type") === "password";
@@ -31,13 +32,26 @@ passwordVisibilityToggle.addEventListener("click", () => {
   passwordVisibilityToggle.textContent = isPassword
     ? "visibility_off"
     : "visibility";
+  passwordInput.placeholder = isPassword ? "SchoolPassword123" : "●●●●●●●●●●●●●●●●●"
+  
 });
 
-button.classList.remove("loginButtonLoading");
+loginButton.classList.remove("loginButtonLoading");
 loader.classList.add("hidden");
-button.firstChild.textContent = "LOGIN";
+loginButton.firstChild.textContent = "LOGIN";
 loginFailed.classList.add("hidden");
 loginFailedInfo.classList.add("hidden");
+
+function setLoginButton() {
+  let hasEmpty = false;
+  for (const input of inputs) {
+    if (input.value.trim() === "") {
+      hasEmpty = true;
+      break;
+    }
+  }
+  loginButton.disabled = isSubmitting || hasEmpty;
+}
 
 const texts = [
   "Made with Chromium!",
@@ -90,7 +104,7 @@ function typeCharLoop() {
         return `<a href="${url}" target="_blank" rel="noopener noreferrer">${match.replace(/^https?:\/\//, "")}</a>`;
       },
     );
-    setTimeout(delCharLoop, 5000);
+    setTimeout(delCharLoop, 4000);
   }
 }
 
@@ -106,19 +120,22 @@ function delCharLoop() {
 
 inputs.forEach((input) => {
   input.addEventListener("input", () => {
-    if (input.value.trim() === "") {
-      button.classList.add("noPush");
-    } else {
-      button.classList.remove("noPush");
-      loginFailed.classList.add("hidden");
-      loginFailedInfo.classList.add("hidden");
-    }
+    loginFailed.classList.add("hidden");
+    loginFailedInfo.classList.add("hidden");
+    setLoginButton();
   });
 });
 
-button.addEventListener("click", async (event) => {
-  if (!("noPush" in button.classList)) {
+async function login(event) {
+  if (event) {
     event.preventDefault();
+  }
+  if (loginButton.disabled) {
+    return;
+  }
+  isSubmitting = true;
+  setLoginButton();
+  try {
     const username = usernameInput.value;
     const password = passwordInput.value;
     const schoolName = schoolNameInput.value;
@@ -132,34 +149,39 @@ button.addEventListener("click", async (event) => {
       schoolUrl: String(schoolUrl),
     });
     await setData(data);
-    try {
-      button.firstChild.textContent = "";
-      button.classList.add("loginButtonLoading");
-      loader.classList.remove("hidden");
-      await ipcRenderer.invoke("units-create-instance");
-      await ipcRenderer.invoke("untis-login");
-      await ipcRenderer.invoke(
-        "switch-window",
-        "src/renderer/mainWindow/index.html",
-      );
+    loginButton.firstChild.textContent = "";
+    loginButton.classList.add("loginButtonLoading");
+    loader.classList.remove("hidden");
+    await ipcRenderer.invoke("units-create-instance");
+    await ipcRenderer.invoke("untis-login");
+    await ipcRenderer.invoke(
+      "switch-window",
+      "src/renderer/mainWindow/index.html",
+    );
 
-      button.classList.remove("loginButtonLoading");
-      loader.classList.add("hidden");
-      button.firstChild.textContent = "LOGIN";
-      loginFailed.classList.add("hidden");
-      loginFailedInfo.classList.add("hidden");
-    } catch (err) {
-      button.firstChild.textContent = "LOGIN";
-      button.classList.remove("loginButtonLoading");
-      loader.classList.add("hidden");
-      ipcRenderer.invoke(
-        "log-error",
-        "(File: loginScript.js) " + err.message || String(err),
-      );
-      loginFailed.classList.remove("hidden");
-      loginFailedInfo.classList.remove("hidden");
-    }
+    loginButton.classList.remove("loginButtonLoading");
+    loader.classList.add("hidden");
+    loginButton.firstChild.textContent = "LOGIN";
+    loginFailed.classList.add("hidden");
+    loginFailedInfo.classList.add("hidden");
+  } catch (err) {
+    loginButton.firstChild.textContent = "LOGIN";
+    loginButton.classList.remove("loginButtonLoading");
+    loader.classList.add("hidden");
+    ipcRenderer.invoke(
+      "log-error",
+      "(File: loginScript.js) " + err.message || String(err),
+    );
+    loginFailed.classList.remove("hidden");
+    loginFailedInfo.classList.remove("hidden");
+  } finally {
+    isSubmitting = false;
+    setLoginButton();
   }
+}
+
+loginButton.addEventListener("click", async (event) => {
+  await login(event);
 });
 
 let textEl;
@@ -168,3 +190,11 @@ document.addEventListener("DOMContentLoaded", () => {
   textEl = document.getElementById("writer-content");
   type();
 });
+
+window.addEventListener("keydown", async (event) => {
+  if (event.key === "Enter") {
+    await login(event);
+  }
+});
+
+setLoginButton();

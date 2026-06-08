@@ -123,5 +123,10 @@ p {
 
 .material-symbols-outlined:hover {
   transition: rotate 0.3s;
-  rotate: -60deg;
+  rotate: -50deg;
+}
+
+@keyframes fullrotate {
+  from { transform: rotate(-50deg) scaleX(-1); }
+  to { transform: rotate(-360deg) scaleX(-1); }
 }

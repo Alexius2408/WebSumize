@@ -43,7 +43,6 @@ async function initalizeNullVariables(app) {
 
   PATHS.CACHE_DIR = path.join(app.getPath("userData"), "cache");
   PATHS.TIMETABLE_CACHE_FILE = path.join(PATHS.CACHE_DIR, "today-timetable.json");
-  console.log(PATHS.CACHE_DIR)
 }
 
 function getTrayIcon() {

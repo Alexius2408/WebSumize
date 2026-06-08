@@ -29,65 +29,82 @@ const {
 } = require("../utils/constants.js");
 const { update } = require("./update.js");
 const { getData, delData } = require("../services/storageService.js");
-const { getTodayTimetable, getAnyTimetable, getHomework, getExams } = require("../api/webUnitsAPI.js");
+const {
+  getTodayTimetable,
+  getAnyTimetable,
+  getHomework,
+  getExams,
+} = require("../api/webUnitsAPI.js");
 
 let untisInstance = null;
-let win = null;
+let mainWin = null;
+let miniWin = null;
 let tray;
 let trayLeftClicked = 0;
 
-function createWindow(login = true, mainWindow = true) {
-  win = new BrowserWindow({
-    width: mainWindow
+function createWindow(login = true, openMainWindow = true) {
+  const newWindow = new BrowserWindow({
+    width: openMainWindow
       ? GENERALLY.SCREEN_WIDTH
       : Math.floor(GENERALLY.SCREEN_WIDTH * 0.33),
-    height: mainWindow
+    height: openMainWindow
       ? GENERALLY.SCREEN_HEIGHT
       : Math.floor(GENERALLY.SCREEN_HEIGHT * 0.68),
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
     },
-    resizable: mainWindow,
-    frame: mainWindow,
+    resizable: openMainWindow,
+    frame: openMainWindow,
+    icon: PATHS.ICON_PATH,
   });
 
-  win.webContents.setWindowOpenHandler(({ url }) => {
+  newWindow.webContents.setWindowOpenHandler(({ url }) => {
     shell.openExternal(url);
     return { action: "deny" };
   });
 
-  win.webContents.on("will-navigate", (event, url) => {
+  newWindow.webContents.on("will-navigate", (event, url) => {
     // Only open external links in default browser
-    if (url !== win.webContents.getURL()) {
+    if (url !== newWindow.webContents.getURL()) {
       event.preventDefault();
       shell.openExternal(url);
     }
   });
 
-  win.on("blur", () => {
-    if (!mainWindow) {
-      win.close();
+  newWindow.on("blur", () => {
+    if (!openMainWindow) {
+      newWindow.close();
     }
   });
 
-  win.on("closed", () => {
-    win = null;
+  newWindow.on("closed", () => {
+    if (openMainWindow) {
+      mainWin = null;
+    } else {
+      miniWin = null;
+    }
   });
 
+  if (openMainWindow) {
+    mainWin = newWindow;
+  } else {
+    miniWin = newWindow;
+  }
+
   if (login) {
-    win.loadFile(
+    newWindow.loadFile(
       path.join(
         PATHS.USERROOT,
         "src/renderer/mainWindow/tabs/login/login.html",
       ),
     );
-  } else if (mainWindow) {
-    win.loadFile(
+  } else if (openMainWindow) {
+    newWindow.loadFile(
       path.join(PATHS.USERROOT, "src/renderer/mainWindow/index.html"),
     );
   } else {
-    win.loadFile(
+    newWindow.loadFile(
       path.join(PATHS.USERROOT, "src/renderer/miniWindow/mini.html"),
     );
   }
@@ -100,12 +117,23 @@ function createTray() {
   const menu = Menu.buildFromTemplate([
     {
       label: "Open Main Window",
-      click: async () => createWindow(!(await hasUserInstance()), true),
+      click: async () => {
+        if (mainWin === null || mainWin == undefined) {
+          createWindow(!(await hasUserInstance()), true);
+        } else {
+          mainWin.show();
+        }
+      },
     },
     {
       label: "Open Mini Window",
-      click: async () =>
-        createWindow(!(await hasUserInstance()), !(await hasUserInstance())),
+      click: async () => {
+        if (miniWin == null || miniWin == undefined) {
+          createWindow(!(await hasUserInstance()), !(await hasUserInstance()));
+        } else {
+          miniWin.show();
+        }
+      },
     },
     { label: "Logout", click: () => userWipeEverything() },
     { label: "Exit", click: () => app.quit() },
@@ -120,8 +148,8 @@ function createTray() {
       singleClickTimer = null;
     }
 
-    if (win) {
-      win.show();
+    if (mainWin) {
+      mainWin.show();
     } else {
       createWindow(!(await hasUserInstance()));
     }
@@ -160,7 +188,6 @@ app.whenReady().then(async () => {
       try {
         if (untisInstance) {
           await untisInstance.login();
-          createWindow(false);
         } else {
           createWindow();
         }
@@ -222,12 +249,11 @@ async function setupIcpHandelers() {
   });
 
   ipcMain.handle("switch-window", async (event, windowName) => {
-    if (untisInstance === null) {
-      createWindow(true);
-    } else {
-      if (!win) createWindow();
-      win.loadFile(path.join(PATHS.USERROOT, windowName));
+    if (!mainWin) {
+      createWindow(false);
     }
+    mainWin.loadFile(path.join(PATHS.USERROOT, windowName));
+    mainWin.show();
   });
 
   ipcMain.handle("get-today-timetable", async (event, refresh) => {
@@ -246,9 +272,28 @@ async function setupIcpHandelers() {
 }
 
 async function userWipeEverything() {
-  untisInstance.logout();
+  if (untisInstance) {
+    await untisInstance.logout();
+  }
   untisInstance = null;
   await delData();
+  if (miniWin != null) {
+    miniWin.close();
+  }
+  if (
+    mainWin != null &&
+    mainWin.getAppPath() !=
+      path.join(PATHS.USERROOT, "src/renderer/mainWindow/tabs/login/login.html")
+  ) {
+    mainWin.loadFile(
+      path.join(
+        PATHS.USERROOT,
+        "src/renderer/mainWindow/tabs/login/login.html",
+      ),
+    );
+  } else {
+    createWindow(true);
+  }
 }
 
 function createLogDir() {

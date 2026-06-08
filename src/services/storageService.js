@@ -35,7 +35,7 @@ function createCacheDir() {
 async function getTimetableCache() {
   try {
     createCacheDir();
-    const data = await fs.promises.readFile(PATHS.TIMETABLE_CACHE_FILE, "utf8");
+    const data = fs.readFile(PATHS.TIMETABLE_CACHE_FILE, "utf8");
     return JSON.parse(data);
   } catch (error) {
     // File doesn't exist yet (first run) or is invalid

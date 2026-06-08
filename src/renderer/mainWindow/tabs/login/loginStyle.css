@@ -1,12 +1,13 @@
 :root {
   /* Light mode colors */
-  --bg-color: #e0e0e0;
+  --bg-color: #FFFDF7;
   --border-color: #d2d2d2;
   --text-color: #0a0a0a;
   --input-text-color: #808080;
   --border-bg-color: #f9f9f9;
   --bg-color-login: #e6562e;
   --bg-color-login-loading: #e6562e69;
+  --passwordvisibility-color: #333333;
   font-size: clamp(14px, 0.9vw + 10px, 18px);
 }
 
@@ -17,13 +18,14 @@
 @media (prefers-color-scheme: dark) {
   /* Dark mode colors*/
   :root {
-    --bg-color: #1f1f1f;
+    --bg-color: #191a1b;
     --border-color: #181818;
     --text-color: #f5f5f5;
-    --input-text-color: #bcbcbc;
+    --input-text-color: #9d9d9d;
     --border-bg-color: #e7e7e7;
     --bg-color-login: #cc4019;
     --bg-color-login-loading: #cc401965;
+    --passwordvisibility-color: #191919;
   }
 }
 
@@ -131,7 +133,7 @@ p {
   top: 55%;
   transform: translateY(-50%);
   cursor: pointer;
-  color: var(--text-color);
+  color: var(--passwordvisibility-color);
   user-select: none;
 }
 
@@ -166,9 +168,15 @@ button {
   cursor: pointer;
 }
 
-button:hover:not(.loginButtonLoading) {
+button:hover:not(.loginButtonLoading):not(:disabled) {
   filter: brightness(115%);
   scale: 1.02;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+  filter: none;
 }
 
 .input-box input::placeholder {
@@ -178,7 +186,6 @@ button:hover:not(.loginButtonLoading) {
 
 @media screen and (min-width: 1465px) {
   .login-container {
-
     position: fixed;
     right: 0;
     top: 0;
@@ -280,11 +287,11 @@ button:hover:not(.loginButtonLoading) {
   cursor: wait;
 }
 
-
-
 /* https://cssloaders.github.io/ */
 
-.loader, .loader:before, .loader:after {
+.loader,
+.loader:before,
+.loader:after {
   border-radius: 50%;
   width: 2.5em;
   height: 2.5em;
@@ -292,7 +299,7 @@ button:hover:not(.loginButtonLoading) {
   animation: bblFadInOut 1.8s infinite ease-in-out;
 }
 .loader {
-  color: #FFF;
+  color: #fff;
   font-size: 7px;
   display: inline-block;
   vertical-align: middle;
@@ -304,7 +311,7 @@ button:hover:not(.loginButtonLoading) {
 }
 .loader:before,
 .loader:after {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
 }
@@ -317,6 +324,12 @@ button:hover:not(.loginButtonLoading) {
 }
 
 @keyframes bblFadInOut {
-  0%, 80%, 100% { box-shadow: 0 2.5em 0 -1.3em }
-  40% { box-shadow: 0 2.5em 0 0 }
+  0%,
+  80%,
+  100% {
+    box-shadow: 0 2.5em 0 -1.3em;
+  }
+  40% {
+    box-shadow: 0 2.5em 0 0;
+  }
 }
