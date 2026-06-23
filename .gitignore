@@ -158,3 +158,17 @@ IdeasForSettings.md
 
 # Ignore vscode
 .vscode
+
+# Electron Builder
+release/
+dist-electron/
+
+# Electron Forge
+out/
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+desktop.ini
