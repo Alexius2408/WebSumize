@@ -14,7 +14,6 @@ const {
   BrowserWindow,
   ipcMain,
   shell,
-  Tray,
   Menu,
   screen,
 } = require("electron");
@@ -35,6 +34,9 @@ const {
   getHomework,
   getExams,
 } = require("../api/webUnitsAPI.js");
+const { createTray } = require("./trayIcon.js");
+
+const { createWindow } = require("./windows.js");
 
 let untisInstance = null;
 let mainWin = null;
@@ -42,135 +44,24 @@ let miniWin = null;
 let tray;
 let trayLeftClicked = 0;
 
-function createWindow(login = true, openMainWindow = true) {
-  const newWindow = new BrowserWindow({
-    width: openMainWindow
-      ? GENERALLY.SCREEN_WIDTH
-      : Math.floor(GENERALLY.SCREEN_WIDTH * 0.33),
-    height: openMainWindow
-      ? GENERALLY.SCREEN_HEIGHT
-      : Math.floor(GENERALLY.SCREEN_HEIGHT * 0.68),
-    webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false,
-    },
-    resizable: openMainWindow,
-    frame: openMainWindow,
-    icon: PATHS.ICON_PATH,
-  });
-
-  newWindow.webContents.setWindowOpenHandler(({ url }) => {
-    shell.openExternal(url);
-    return { action: "deny" };
-  });
-
-  newWindow.webContents.on("will-navigate", (event, url) => {
-    // Only open external links in default browser
-    if (url !== newWindow.webContents.getURL()) {
-      event.preventDefault();
-      shell.openExternal(url);
-    }
-  });
-
-  newWindow.on("blur", () => {
-    if (!openMainWindow) {
-      newWindow.close();
-    }
-  });
-
-  newWindow.on("closed", () => {
-    if (openMainWindow) {
-      mainWin = null;
-    } else {
-      miniWin = null;
-    }
-  });
-
-  if (openMainWindow) {
-    mainWin = newWindow;
-  } else {
-    miniWin = newWindow;
-  }
-
-  if (login) {
-    newWindow.loadFile(
-      path.join(
-        PATHS.USERROOT,
-        "src/renderer/mainWindow/tabs/login/login.html",
-      ),
-    );
-  } else if (openMainWindow) {
-    newWindow.loadFile(
-      path.join(PATHS.USERROOT, "src/renderer/mainWindow/index.html"),
-    );
-  } else {
-    newWindow.loadFile(
-      path.join(PATHS.USERROOT, "src/renderer/miniWindow/mini.html"),
-    );
-  }
+function getMainWindow() {
+  return mainWin;
 }
 
-function createTray() {
-  tray = new Tray(PATHS.ICON_PATH);
-  let singleClickTimer = null;
-
-  const menu = Menu.buildFromTemplate([
-    {
-      label: "Open Main Window",
-      click: async () => {
-        if (mainWin === null || mainWin == undefined) {
-          createWindow(!(await hasUserInstance()), true);
-        } else {
-          mainWin.show();
-        }
-      },
-    },
-    {
-      label: "Open Mini Window",
-      click: async () => {
-        if (miniWin == null || miniWin == undefined) {
-          createWindow(!(await hasUserInstance()), !(await hasUserInstance()));
-        } else {
-          miniWin.show();
-        }
-      },
-    },
-    { label: "Logout", click: () => userWipeEverything() },
-    { label: "Exit", click: () => app.quit() },
-  ]);
-
-  tray.setContextMenu(menu);
-  tray.setToolTip("WebSumize");
-
-  tray.on("double-click", async () => {
-    if (singleClickTimer) {
-      clearTimeout(singleClickTimer);
-      singleClickTimer = null;
-    }
-
-    if (mainWin) {
-      mainWin.show();
-    } else {
-      createWindow(!(await hasUserInstance()));
-    }
-  });
-
-  tray.on("click", () => {
-    if (singleClickTimer) {
-      clearTimeout(singleClickTimer);
-    }
-
-    singleClickTimer = setTimeout(async () => {
-      createWindow(!(await hasUserInstance()), !(await hasUserInstance()));
-      singleClickTimer = null;
-    }, 300);
-  });
+function getMiniWindow() {
+  return miniWin;
 }
 
 app.whenReady().then(async () => {
   await initalizeNullVariables(app);
   setupIcpHandelers();
-  createTray();
+  createTray({
+    createWindow,
+    hasUserInstance,
+    userWipeEverything,
+    getMainWindow,
+    getMiniWindow,
+  });
 
   if (untisInstance) {
     update();
@@ -178,22 +69,22 @@ app.whenReady().then(async () => {
 
   untisInstance = await createUnitsInstance();
   if (untisInstance == null) {
-    createWindow(true);
+    createWindow(true, true, mainWin, miniWin);
   } else {
     let userData = await getData();
 
     if (!userData) {
-      createWindow(true);
+      createWindow(true, true, mainWin, miniWin);
     } else {
       try {
         if (untisInstance) {
           await untisInstance.login();
         } else {
-          createWindow();
+          createWindow(true, true, mainWin, miniWin);
         }
       } catch (err) {
         LogWrite("Problem with login (File: main.js) " + err.message);
-        createWindow(true);
+        createWindow(true, true, mainWin, miniWin);
       }
     }
   }
@@ -217,6 +108,8 @@ async function createUnitsInstance() {
     userData.username,
     userData.password,
     userData.schoolUrl,
+    undefined,
+    true,
   ));
 }
 
@@ -250,7 +143,7 @@ async function setupIcpHandelers() {
 
   ipcMain.handle("switch-window", async (event, windowName) => {
     if (!mainWin) {
-      createWindow(false);
+      createWindow(false, true, mainWin, miniWin);
     }
     mainWin.loadFile(path.join(PATHS.USERROOT, windowName));
     mainWin.show();
@@ -277,13 +170,13 @@ async function userWipeEverything() {
   }
   untisInstance = null;
   await delData();
-  if (miniWin != null) {
+  if (miniWin) {
     miniWin.close();
   }
   if (
-    mainWin != null &&
-    mainWin.getAppPath() !=
-      path.join(PATHS.USERROOT, "src/renderer/mainWindow/tabs/login/login.html")
+    mainWin &&
+    mainWin.webContents.getURL() !==
+      `file://${path.join(PATHS.USERROOT, "src/renderer/mainWindow/tabs/login/login.html")}`
   ) {
     mainWin.loadFile(
       path.join(
@@ -292,7 +185,7 @@ async function userWipeEverything() {
       ),
     );
   } else {
-    createWindow(true);
+    createWindow(true, true, mainWin, miniWin);
   }
 }
 

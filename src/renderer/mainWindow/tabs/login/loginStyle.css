@@ -1,6 +1,6 @@
 :root {
   /* Light mode colors */
-  --bg-color: #FFFDF7;
+  --bg-color: #fffdf7;
   --border-color: #d2d2d2;
   --text-color: #0a0a0a;
   --input-text-color: #808080;
@@ -127,7 +127,7 @@ p {
   position: relative;
 }
 
-#passwordvisibility {
+.password-icon {
   position: absolute;
   right: 13px;
   top: 55%;
@@ -135,6 +135,8 @@ p {
   cursor: pointer;
   color: var(--passwordvisibility-color);
   user-select: none;
+  height: 24px;
+  width: 24px;
 }
 
 .input-box label {
@@ -264,7 +266,7 @@ button:disabled {
   margin-top: 10px;
   text-align: center;
   width: 100%;
-  color: red;
+  color: #f80000;
 }
 
 .loginFailedLink {

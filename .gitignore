@@ -155,3 +155,6 @@ TODO.md
 
 # ignore Ideas
 IdeasForSettings.md
+
+# Ignore vscode
+.vscode

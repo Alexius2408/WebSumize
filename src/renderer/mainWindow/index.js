@@ -25,7 +25,10 @@ async function loadTimetable(refresh = false) {
   }
   const timetable = await ipcRenderer.invoke("get-today-timetable", refresh);
   timetabletext.textContent = JSON.stringify(timetable);
+
+  
 }
+
 
 logoutbutton.addEventListener("click", async (event) => {
   await ipcRenderer.invoke("untis-logout");

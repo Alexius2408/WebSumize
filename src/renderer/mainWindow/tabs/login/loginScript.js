@@ -23,17 +23,25 @@ const loginFailed = document.getElementById("loginFailedInfo");
 const loginFailedInfo = document.getElementById("loginFailedInfoLink");
 const inputs = document.querySelectorAll(".input");
 const loader = document.getElementById("loaderAnim");
-const passwordVisibilityToggle = document.getElementById("passwordvisibility");
+const passwordVisibilityToggle = document.querySelectorAll(
+  ".passwordvisibility",
+);
 let isSubmitting = false;
 
-passwordVisibilityToggle.addEventListener("click", () => {
-  const isPassword = passwordInput.getAttribute("type") === "password";
-  passwordInput.setAttribute("type", isPassword ? "text" : "password");
-  passwordVisibilityToggle.textContent = isPassword
-    ? "visibility_off"
-    : "visibility";
-  passwordInput.placeholder = isPassword ? "SchoolPassword123" : "●●●●●●●●●●●●●●●●●"
-  
+console.log(passwordVisibilityToggle);
+
+passwordVisibilityToggle.forEach((element) => {
+  element.addEventListener("click", () => {
+    const isPassword = passwordInput.getAttribute("type") === "password";
+    passwordInput.setAttribute("type", isPassword ? "text" : "password");
+
+    document.getElementById("passwordNotVisible").classList.toggle("hidden");
+    document.getElementById("passwordVisible").classList.toggle("hidden");
+
+    passwordInput.placeholder = isPassword
+      ? "SchoolPassword123"
+      : "●●●●●●●●●●●●●●●●●";
+  });
 });
 
 loginButton.classList.remove("loginButtonLoading");
@@ -198,3 +206,11 @@ window.addEventListener("keydown", async (event) => {
 });
 
 setLoginButton();
+
+window.addEventListener("online", () => {
+  document.getElementById("offlineText").classList.add("hidden");
+});
+
+window.addEventListener("offline", () => {
+  document.getElementById("offlineText").classList.remove("hidden");
+});

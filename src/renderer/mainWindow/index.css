@@ -59,10 +59,11 @@ p {
   margin-right: 10px;
   margin-left: auto;
   border: none;
-  width: 5dvw;
-  height: 5dvh;
+  width: 3.5dvw;
+  height: 3.5dvh;
   transition: transform 0.25s ease;
   cursor: pointer;
+  color: var(--border-bg-color)
 }
 
 .dropdownmenu {
