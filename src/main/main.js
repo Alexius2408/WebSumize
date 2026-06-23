@@ -202,7 +202,7 @@ function LogWrite(message) {
   const day = date.toLocaleDateString("sv-SE");
   const time = date.toLocaleTimeString("sv-SE");
   const logFilePath = path.join(PATHS.LOG_DIR_PATH, `${day}--Log.log`);
-  const shortMsg = message.replace("\n", " ").slice(0, 200); // limit to 200 chars
+  const shortMsg = message.replaceAll("\n", " ").slice(0, 200); // limit to 200 chars
 
   const logMessage = `[${day} ${time}]:  ${shortMsg}\n\n`;
 
