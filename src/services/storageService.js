@@ -55,10 +55,19 @@ async function saveTimetableCache(timetableData) {
   );
 }
 
+async function delTimetableCache() {
+  try {
+    await fs.promises.unlink(PATHS.TIMETABLE_CACHE_FILE);
+  } catch {
+    // File doesn't exist -> nothing to delete
+  }
+}
+
 module.exports = {
   setData,
   getData,
   delData,
   getTimetableCache,
   saveTimetableCache,
+  delTimetableCache,
 };

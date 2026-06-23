@@ -13,7 +13,7 @@ const timetable = document.getElementById("timetable");
 
 const { ipcRenderer } = window.require("electron");
 
-const { delData } = require("../../services/storageService.js");
+const { delData, delTimetableCache } = require("../../services/storageService.js");
 
 const logoutbutton = document.getElementById("logoutBtn");
 const refreshButton = document.getElementById("refreshBtn");
@@ -34,6 +34,7 @@ logoutbutton.addEventListener("click", async (event) => {
   await ipcRenderer.invoke("untis-logout");
   await ipcRenderer.invoke("units-del-instance");
   await delData();
+  await delTimetableCache();
   await ipcRenderer.invoke(
     "switch-window",
     "src/renderer/mainWindow/tabs/login/login.html",

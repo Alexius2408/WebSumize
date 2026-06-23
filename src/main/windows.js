@@ -16,26 +16,48 @@ const {
   shell,
   Menu,
   screen,
+  nativeTheme,
 } = require("electron");
 const path = require("path");
 
 const { GENERALLY, PATHS } = require("../utils/constants.js");
 
-function createWindow(login = true, openMainWindow = true, mainWin, miniWin) {
+// Only allow http/https links to be opened in the external browser.
+// Other schemes (file:, smb:, etc.) can trigger OS handlers and code execution.
+function openExternalSafe(url) {
+  try {
+    const parsed = new URL(url);
+    if (parsed.protocol === "http:" || parsed.protocol === "https:") {
+      shell.openExternal(url);
+    }
+  } catch {}
+}
+
+function createWindow(
+  login = true,
+  openMainWindow = true,
+  getMainWindow,
+  getMiniWindow,
+  setMainWindow,
+  setMiniWindow,
+) {
+  const mainWin = getMainWindow();
+  const miniWin = getMiniWindow();
   if ((openMainWindow || login) && mainWin) {
     if (mainWin.isMinimized()) {
       mainWin.restore();
     }
     mainWin.focus();
-    return (mainWin, miniWin);
+    return { mainWin, miniWin };
   }
   const newWindow = new BrowserWindow({
     width: openMainWindow
       ? GENERALLY.SCREEN_WIDTH
-      : Math.floor(GENERALLY.SCREEN_WIDTH * 0.33),
+      : Math.floor(GENERALLY.SCREEN_WIDTH * 0.3),
     height: openMainWindow
       ? GENERALLY.SCREEN_HEIGHT
-      : Math.floor(GENERALLY.SCREEN_HEIGHT * 0.68),
+      : Math.floor(GENERALLY.SCREEN_HEIGHT * 0.6),
+    backgroundColor: nativeTheme.shouldUseDarkColors ? "#191a1b" : "#fffdf7",
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
@@ -43,10 +65,11 @@ function createWindow(login = true, openMainWindow = true, mainWin, miniWin) {
     resizable: openMainWindow,
     frame: openMainWindow,
     icon: PATHS.ICON_PATH,
+    skipTaskbar: !openMainWindow,
   });
 
   newWindow.webContents.setWindowOpenHandler(({ url }) => {
-    shell.openExternal(url);
+    openExternalSafe(url);
     return { action: "deny" };
   });
 
@@ -54,28 +77,29 @@ function createWindow(login = true, openMainWindow = true, mainWin, miniWin) {
     // Only open external links in default browser
     if (url !== newWindow.webContents.getURL()) {
       event.preventDefault();
-      shell.openExternal(url);
+      openExternalSafe(url);
     }
   });
 
   newWindow.on("blur", () => {
     if (!openMainWindow) {
       newWindow.close();
+      setMiniWindow(null);
     }
   });
 
   newWindow.on("closed", () => {
     if (openMainWindow) {
-      mainWin = null;
+      setMainWindow(null);
     } else {
-      miniWin = null;
+      setMiniWindow(null);
     }
   });
 
   if (openMainWindow) {
-    mainWin = newWindow;
+    setMainWindow(newWindow);
   } else {
-    miniWin = newWindow;
+    setMiniWindow(newWindow);
   }
 
   if (login) {
@@ -95,7 +119,7 @@ function createWindow(login = true, openMainWindow = true, mainWin, miniWin) {
     );
   }
 
-  return (mainWin, miniWin);
+  return { mainWin, miniWin };
 }
 
 module.exports = { createWindow };

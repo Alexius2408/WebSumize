@@ -26,8 +26,11 @@ const {
   PATHS,
   initalizeNullVariables,
 } = require("../utils/constants.js");
-const { update } = require("./update.js");
-const { getData, delData } = require("../services/storageService.js");
+const {
+  getData,
+  delData,
+  delTimetableCache,
+} = require("../services/storageService.js");
 const {
   getTodayTimetable,
   getAnyTimetable,
@@ -52,6 +55,14 @@ function getMiniWindow() {
   return miniWin;
 }
 
+function setMainWindow(win) {
+  mainWin = win;
+}
+
+function setMiniWindow(win) {
+  miniWin = win;
+}
+
 app.whenReady().then(async () => {
   await initalizeNullVariables(app);
   setupIcpHandelers();
@@ -61,30 +72,36 @@ app.whenReady().then(async () => {
     userWipeEverything,
     getMainWindow,
     getMiniWindow,
+    setMainWindow,
+    setMiniWindow,
   });
-
-  if (untisInstance) {
-    update();
-  }
 
   untisInstance = await createUnitsInstance();
   if (untisInstance == null) {
-    createWindow(true, true, mainWin, miniWin);
+    const result = createWindow(true, true, getMainWindow, getMiniWindow, setMainWindow, setMiniWindow);
+    mainWin = result.mainWin;
+    miniWin = result.miniWin;
   } else {
     let userData = await getData();
 
     if (!userData) {
-      createWindow(true, true, mainWin, miniWin);
+      const result = createWindow(true, true, getMainWindow, getMiniWindow, setMainWindow, setMiniWindow);
+      mainWin = result.mainWin;
+      miniWin = result.miniWin;
     } else {
       try {
         if (untisInstance) {
           await untisInstance.login();
         } else {
-          createWindow(true, true, mainWin, miniWin);
+          const result = createWindow(true, true, getMainWindow, getMiniWindow, setMainWindow, setMiniWindow);
+          mainWin = result.mainWin;
+          miniWin = result.miniWin;
         }
       } catch (err) {
         LogWrite("Problem with login (File: main.js) " + err.message);
-        createWindow(true, true, mainWin, miniWin);
+        const result = createWindow(true, true, getMainWindow, getMiniWindow, setMainWindow, setMiniWindow);
+        mainWin = result.mainWin;
+        miniWin = result.miniWin;
       }
     }
   }
@@ -143,7 +160,9 @@ async function setupIcpHandelers() {
 
   ipcMain.handle("switch-window", async (event, windowName) => {
     if (!mainWin) {
-      createWindow(false, true, mainWin, miniWin);
+      const result = createWindow(false, true, getMainWindow, getMiniWindow, setMainWindow, setMiniWindow);
+      mainWin = result.mainWin;
+      miniWin = result.miniWin;
     }
     mainWin.loadFile(path.join(PATHS.USERROOT, windowName));
     mainWin.show();
@@ -170,6 +189,7 @@ async function userWipeEverything() {
   }
   untisInstance = null;
   await delData();
+  await delTimetableCache();
   if (miniWin) {
     miniWin.close();
   }
@@ -185,7 +205,9 @@ async function userWipeEverything() {
       ),
     );
   } else {
-    createWindow(true, true, mainWin, miniWin);
+    const result = createWindow(true, true, getMainWindow, getMiniWindow, setMainWindow, setMiniWindow);
+    mainWin = result.mainWin;
+    miniWin = result.miniWin;
   }
 }
 

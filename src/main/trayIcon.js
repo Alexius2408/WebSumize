@@ -20,6 +20,8 @@ function createTray({
   userWipeEverything,
   getMainWindow,
   getMiniWindow,
+  setMainWindow,
+  setMiniWindow,
 }) {
   const tray = new Tray(PATHS.ICON_PATH);
   let singleClickTimer = null;
@@ -29,10 +31,19 @@ function createTray({
       label: "Open Main Window",
       click: async () => {
         const mainWin = getMainWindow();
-        const miniWin = getMiniWindow();
 
         if (!mainWin) {
-          createWindow(!(await hasUserInstance()), true, mainWin, miniWin);
+          const result = createWindow(
+            !(await hasUserInstance()),
+            true,
+            getMainWindow,
+            getMiniWindow,
+            setMainWindow,
+            setMiniWindow,
+          );
+
+          setMainWindow(result.mainWin);
+          setMiniWindow(result.miniWin);
         } else {
           mainWin.show();
         }
@@ -41,11 +52,20 @@ function createTray({
     {
       label: "Open Mini Window",
       click: async () => {
-        const miniWin = getMiniWindow();
-        const mainWin = getMainWindow();
+        let miniWin = getMiniWindow();
 
         if (!miniWin) {
-          createWindow(!(await hasUserInstance()), !(await hasUserInstance()), mainWin, miniWin);
+          const result = createWindow(
+            !(await hasUserInstance()),
+            !(await hasUserInstance()),
+            getMainWindow,
+            getMiniWindow,
+            setMainWindow,
+            setMiniWindow,
+          );
+
+          setMainWindow(result.mainWin);
+          setMiniWindow(result.miniWin);
         } else {
           miniWin.show();
         }
@@ -64,25 +84,41 @@ function createTray({
       singleClickTimer = null;
     }
 
-    const mainWin = getMainWindow();
-    const miniWin = getMiniWindow();
+    let mainWin = getMainWindow();
 
     if (mainWin) {
       mainWin.show();
     } else {
-      createWindow(!(await hasUserInstance()), true, mainWin, miniWin);
+      const result = createWindow(
+        !(await hasUserInstance()),
+        true,
+        getMainWindow,
+        getMiniWindow,
+        setMainWindow,
+        setMiniWindow,
+      );
+
+      setMainWindow(result.mainWin);
+      setMiniWindow(result.miniWin);
     }
   });
 
   tray.on("click", () => {
-    const miniWin = getMiniWindow();
-    const mainWin = getMainWindow();
     if (singleClickTimer) {
       clearTimeout(singleClickTimer);
     }
 
     singleClickTimer = setTimeout(async () => {
-      createWindow(!(await hasUserInstance()), !(await hasUserInstance()), mainWin, miniWin);
+      const result = createWindow(
+        !(await hasUserInstance()),
+        !(await hasUserInstance()),
+        getMainWindow,
+        getMiniWindow,
+        setMainWindow,
+        setMiniWindow,
+      );
+      setMainWindow(result.mainWin);
+      setMiniWindow(result.miniWin);
       singleClickTimer = null;
     }, 300);
   });
