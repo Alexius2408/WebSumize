@@ -117,7 +117,7 @@ p {
     transition: rotate 0.43s;
     rotate: 0deg;
     cursor: pointer;
-    display: block;
+    display: inline-block;
     margin-top: 20px;
     margin-left: 97%;
 }

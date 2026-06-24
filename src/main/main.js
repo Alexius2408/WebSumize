@@ -6,7 +6,7 @@
  License: Personal / Non-Commercial Use Only
 
  File: main.js
- Description: Main process of WebSumize. Manages window creation, IPC, user authentication, and WebUntis data.
+ Description: Main process of WebSumize. Manages IPC, user authentication, and WebUntis data.
 */
 
 const {
@@ -40,12 +40,21 @@ const {
 const { createTray } = require("./trayIcon.js");
 
 const { createWindow } = require("./windows.js");
+const { setupIpcHandlers } = require("./ipc/mainHandeler.js");
 
 let untisInstance = null;
 let mainWin = null;
 let miniWin = null;
 let tray;
 let trayLeftClicked = 0;
+
+function getUntisInstance() {
+  return untisInstance;
+}
+
+function setUntisInstance(val) {
+  untisInstance = val;
+}
 
 function getMainWindow() {
   return mainWin;
@@ -65,7 +74,17 @@ function setMiniWindow(win) {
 
 app.whenReady().then(async () => {
   await initalizeNullVariables(app);
-  setupIcpHandelers();
+  setupIpcHandlers({
+    getUntisInstance,
+    setUntisInstance,
+    createUnitsInstance,
+    getMainWindow,
+    getMiniWindow,
+    setMainWindow,
+    setMiniWindow,
+    LogWrite,
+  });
+
   createTray({
     createWindow,
     hasUserInstance,
@@ -78,14 +97,28 @@ app.whenReady().then(async () => {
 
   untisInstance = await createUnitsInstance();
   if (untisInstance == null) {
-    const result = createWindow(true, true, getMainWindow, getMiniWindow, setMainWindow, setMiniWindow);
+    const result = createWindow(
+      true,
+      true,
+      getMainWindow,
+      getMiniWindow,
+      setMainWindow,
+      setMiniWindow,
+    );
     mainWin = result.mainWin;
     miniWin = result.miniWin;
   } else {
     let userData = await getData();
 
     if (!userData) {
-      const result = createWindow(true, true, getMainWindow, getMiniWindow, setMainWindow, setMiniWindow);
+      const result = createWindow(
+        true,
+        true,
+        getMainWindow,
+        getMiniWindow,
+        setMainWindow,
+        setMiniWindow,
+      );
       mainWin = result.mainWin;
       miniWin = result.miniWin;
     } else {
@@ -93,13 +126,28 @@ app.whenReady().then(async () => {
         if (untisInstance) {
           await untisInstance.login();
         } else {
-          const result = createWindow(true, true, getMainWindow, getMiniWindow, setMainWindow, setMiniWindow);
+          const result = createWindow(
+            true,
+            true,
+            getMainWindow,
+            getMiniWindow,
+            setMainWindow,
+            setMiniWindow,
+          );
+
           mainWin = result.mainWin;
           miniWin = result.miniWin;
         }
       } catch (err) {
         LogWrite("Problem with login (File: main.js) " + err.message);
-        const result = createWindow(true, true, getMainWindow, getMiniWindow, setMainWindow, setMiniWindow);
+        const result = createWindow(
+          true,
+          true,
+          getMainWindow,
+          getMiniWindow,
+          setMainWindow,
+          setMiniWindow,
+        );
         mainWin = result.mainWin;
         miniWin = result.miniWin;
       }
@@ -120,67 +168,14 @@ async function createUnitsInstance() {
   let data = await getData();
   if (!data) return null;
   let userData = JSON.parse(data);
-  return (untisInstance = new WebUntis(
+  return new WebUntis(
     userData.schoolName,
     userData.username,
     userData.password,
     userData.schoolUrl,
     undefined,
     true,
-  ));
-}
-
-async function setupIcpHandelers() {
-  ipcMain.handle("units-create-instance", async () => {
-    untisInstance = await createUnitsInstance();
-  });
-
-  ipcMain.handle("untis-login", async () => {
-    if (untisInstance) {
-      await untisInstance.login();
-    }
-  });
-
-  ipcMain.handle("units-del-instance", async () => {
-    if (untisInstance != null) {
-      untisInstance = null;
-    }
-  });
-
-  ipcMain.handle("untis-logout", async () => {
-    if (untisInstance) {
-      await untisInstance.logout();
-    }
-  });
-
-  ipcMain.handle("untis-validate-session", async () => {
-    if (!untisInstance) return true;
-    return await untisInstance.validateSession();
-  });
-
-  ipcMain.handle("switch-window", async (event, windowName) => {
-    if (!mainWin) {
-      const result = createWindow(false, true, getMainWindow, getMiniWindow, setMainWindow, setMiniWindow);
-      mainWin = result.mainWin;
-      miniWin = result.miniWin;
-    }
-    mainWin.loadFile(path.join(PATHS.USERROOT, windowName));
-    mainWin.show();
-  });
-
-  ipcMain.handle("get-today-timetable", async (event, refresh) => {
-    if (!untisInstance) throw new Error("Not logged in to WebUntis.");
-    return await getTodayTimetable(untisInstance, refresh);
-  });
-
-  ipcMain.handle("get-app-path", (event, arguemnt) => {
-    if (arguemnt === "") return app.getAppPath();
-    return app.getAppPath(arguemnt);
-  });
-
-  ipcMain.handle("log-error", (event, msg) => {
-    LogWrite(msg);
-  });
+  );
 }
 
 async function userWipeEverything() {
@@ -205,7 +200,14 @@ async function userWipeEverything() {
       ),
     );
   } else {
-    const result = createWindow(true, true, getMainWindow, getMiniWindow, setMainWindow, setMiniWindow);
+    const result = createWindow(
+      true,
+      true,
+      getMainWindow,
+      getMiniWindow,
+      setMainWindow,
+      setMiniWindow,
+    );
     mainWin = result.mainWin;
     miniWin = result.miniWin;
   }
@@ -217,6 +219,7 @@ function createLogDir() {
     fs.mkdirSync(PATHS.LOG_DIR_PATH, { recursive: true });
   }
 }
+
 function LogWrite(message) {
   createLogDir();
 

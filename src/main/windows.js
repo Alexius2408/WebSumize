@@ -6,7 +6,8 @@
  License: Personal / Non-Commercial Use Only
 
  File: windows.js
- Description:
+ Description: This file creates and manages the application's windows.
+              It handles the login, main, and mini windows, and controls external link navigation for security.
 */
 
 const {
@@ -119,7 +120,11 @@ function createWindow(
     );
   }
 
-  return { mainWin, miniWin };
+  if (openMainWindow) {
+    return { mainWin: newWindow, miniWin };
+  } else {
+    return { mainWin, miniWin: newWindow };
+  }
 }
 
 module.exports = { createWindow };

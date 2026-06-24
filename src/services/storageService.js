@@ -38,13 +38,14 @@ async function getTimetableCache() {
     const data = fs.readFile(PATHS.TIMETABLE_CACHE_FILE, "utf8");
     return JSON.parse(data);
   } catch (error) {
-    // File doesn't exist yet (first run) or is invalid
+    // File doesn't exist yet or is invalid
     return null;
   }
 }
 
 async function saveTimetableCache(timetableData) {
   createCacheDir()
+  timetableData.sort((a, b) => a.startTime - b.startTime);
   const cacheData = {
     timetable: timetableData,
     timestamp: Date.now(),
@@ -59,7 +60,7 @@ async function delTimetableCache() {
   try {
     await fs.promises.unlink(PATHS.TIMETABLE_CACHE_FILE);
   } catch {
-    // File doesn't exist -> nothing to delete
+    // File doesn't exist, nothing to delete
   }
 }
 
