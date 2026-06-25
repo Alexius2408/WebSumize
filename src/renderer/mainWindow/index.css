@@ -1,26 +1,13 @@
 :root {
-  /* Light mode colors */
-  --input-text-color: #808080;
-  --bg-color: #ebebeb;
-  --bg-color-for-bttns: #efeeee9e;
-  --border-color: #d2d2d2;
-  --text-color: #0a0a0a;
-  --text-hover: #232323;
-  --border-bg-color: #f9f9f9;
-  --bg-color-login: #e6562e;
-}
-
-@media (prefers-color-scheme: dark) {
-  /* Dark mode colors */
-  :root {
-    --bg-color: #141414;
-    --bg-color-for-bttns: #2525259e;
-    --border-color: #181818;
-    --text-color: #f5f5f5;
-    --text-hover: #3e3e3e;
-    --border-bg-color: #e7e7e7;
-    --bg-color-login: #cc4019;
-  }
+  --bg-color: #141414;
+  --bg-color-for-bttns: #2525259e;
+  --border-color: #181818;
+  --text-color: #f5f5f5;
+  --text-hover: #3e3e3e;
+  --border-bg-color: #e7e7e7;
+  --bg-color-login: #cc4019;
+  --timetable-bg-color: #191a1b;
+  --timetable-lecture-bg-color: #3f4041;
 }
 
 body {
@@ -63,7 +50,7 @@ p {
   height: 3.5dvh;
   transition: transform 0.25s ease;
   cursor: pointer;
-  color: var(--border-bg-color)
+  color: var(--text-hover);
 }
 
 .dropdownmenu {
@@ -74,7 +61,7 @@ p {
 .dropdownmenu-content {
   display: none;
   position: absolute;
-  background-color: var(--bg-color);
+  background-color: var(--text-hover);
   min-width: 160px;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.3);
   z-index: 1;
@@ -112,14 +99,14 @@ p {
     "wght" 400,
     "GRAD" 0,
     "opsz" 24;
-    color: var(--text-color);
-    transform: scaleX(-1);
-    transition: rotate 0.43s;
-    rotate: 0deg;
-    cursor: pointer;
-    display: inline-block;
-    margin-top: 20px;
-    margin-left: 97%;
+  color: var(--text-color);
+  transform: scaleX(-1);
+  transition: rotate 0.43s;
+  rotate: 0deg;
+  cursor: pointer;
+  display: inline-block;
+  margin-top: 20px;
+  margin-left: 97%;
 }
 
 .material-symbols-outlined:hover {
@@ -128,6 +115,10 @@ p {
 }
 
 @keyframes fullrotate {
-  from { transform: rotate(-50deg) scaleX(-1); }
-  to { transform: rotate(-360deg) scaleX(-1); }
+  from {
+    transform: rotate(-50deg) scaleX(-1);
+  }
+  to {
+    transform: rotate(-360deg) scaleX(-1);
+  }
 }

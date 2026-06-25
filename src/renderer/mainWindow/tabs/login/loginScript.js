@@ -12,6 +12,7 @@
 const { setData } = require("../../../../services/storageService.js");
 const { ipcRenderer } = require("electron");
 const { GENERALLY } = require("../../../../utils/constants.js");
+const isOnline = require('is-online');
 
 const loginButton = document.getElementById("loginButton");
 const usernameInput = document.getElementById("username");
@@ -27,8 +28,6 @@ const passwordVisibilityToggle = document.querySelectorAll(
   ".passwordvisibility",
 );
 let isSubmitting = false;
-
-console.log(passwordVisibilityToggle);
 
 passwordVisibilityToggle.forEach((element) => {
   element.addEventListener("click", () => {
@@ -207,10 +206,23 @@ window.addEventListener("keydown", async (event) => {
 
 setLoginButton();
 
-window.addEventListener("online", () => {
-  document.getElementById("offlineText").classList.add("hidden");
-});
+let lastConectionState = null;
 
-window.addEventListener("offline", () => {
-  document.getElementById("offlineText").classList.remove("hidden");
-});
+setInterval(async () => {
+  const online = await isOnline();
+
+  if (online !== lastConectionState) {
+    lastConectionState = online;
+    if (online) {
+      document.getElementById("offlineText").classList.add("hidden");
+      inputs.forEach((element) => {
+        element.disabled = false;
+      });
+    } else {
+      document.getElementById("offlineText").classList.remove("hidden");
+      inputs.forEach((element) => {
+        element.disabled = true;
+      });
+    }
+  }
+}, 5000);

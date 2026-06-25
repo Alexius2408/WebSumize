@@ -1,32 +1,16 @@
 :root {
-  /* Light mode colors */
-  --bg-color: #fffdf7;
-  --border-color: #d2d2d2;
-  --text-color: #0a0a0a;
-  --input-text-color: #808080;
-  --border-bg-color: #f9f9f9;
-  --bg-color-login: #e6562e;
-  --bg-color-login-loading: #e6562e69;
-  --passwordvisibility-color: #333333;
-  font-size: clamp(14px, 0.9vw + 10px, 18px);
+  --bg-color: #191a1b;
+  --border-color: #181818;
+  --text-color: #f5f5f5;
+  --input-text-color: #9d9d9d;
+  --border-bg-color: #e7e7e7;
+  --bg-color-login: #cc4019;
+  --bg-color-login-loading: #cc401965;
+  --passwordvisibility-color: #191919;
 }
 
 .hidden {
   display: none !important;
-}
-
-@media (prefers-color-scheme: dark) {
-  /* Dark mode colors*/
-  :root {
-    --bg-color: #191a1b;
-    --border-color: #181818;
-    --text-color: #f5f5f5;
-    --input-text-color: #9d9d9d;
-    --border-bg-color: #e7e7e7;
-    --bg-color-login: #cc4019;
-    --bg-color-login-loading: #cc401965;
-    --passwordvisibility-color: #191919;
-  }
 }
 
 * {
@@ -41,13 +25,14 @@ body {
   justify-content: center;
   align-items: center;
   overflow: hidden;
+  height: 100vh;
   font-family: sans-serif;
 }
 
 h1,
 h2 {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   color: var(--text-color);
 }
 
@@ -86,7 +71,7 @@ p {
 }
 
 .logo img {
-  margin: 1rem;
+  margin: 1rem 1rem 0 1rem;
   display: block;
   width: clamp(120px, 18vw, 220px);
   height: auto;
@@ -109,7 +94,7 @@ p {
 }
 
 #username {
-  margin: 4vh 0 0 0;
+  margin: 2.5vh 0 0 0;
 }
 
 .input-box input {
@@ -118,7 +103,7 @@ p {
   width: 100%;
   padding: clamp(12px, 1.2vw, 17px) clamp(10px, 1vw, 13px);
   border: 1.5px solid var(--border-color);
-  border-radius: 8px;
+  border-radius: 9px;
   outline: none;
   background-color: var(--border-bg-color);
 }
@@ -130,13 +115,17 @@ p {
 .password-icon {
   position: absolute;
   right: 13px;
-  top: 55%;
+  top: 50%;
   transform: translateY(-50%);
   cursor: pointer;
   color: var(--passwordvisibility-color);
   user-select: none;
-  height: 24px;
-  width: 24px;
+  height: 25px;
+  width: 25px;
+}
+
+input:disabled {
+  cursor: not-allowed;
 }
 
 .input-box label {
@@ -191,7 +180,9 @@ button:disabled {
     position: fixed;
     right: 0;
     top: 0;
+    bottom: 0;
     width: 45%;
+    height: 100vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -260,6 +251,15 @@ button:disabled {
   #writer-cursor {
     display: none;
   }
+}
+
+.noInternettConnection {
+  position: unset;
+  margin-top: 2px;
+  font-size: 0.97rem;
+  text-align: center;
+  width: 100%;
+  color: #f80000;
 }
 
 .loginFailed {

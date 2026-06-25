@@ -10,23 +10,23 @@
 */
 
 const timetable = document.getElementById("timetable");
+const timetablebox = document.getElementById("timetable");
 
 const { ipcRenderer } = window.require("electron");
 
 const { delData, delTimetableCache } = require("../../services/storageService.js");
+const { createTimetable } = require("./index_createTimetable.js")
 
 const logoutbutton = document.getElementById("logoutBtn");
 const refreshButton = document.getElementById("refreshBtn");
 
 async function loadTimetable(refresh = false) {
   if (refresh) {
-    timetabletext.textContent = "";
+    timetablebox.innerHTML = "";
     await new Promise((resolve) => setTimeout(resolve, 500));
   }
-  const timetable = await ipcRenderer.invoke("get-today-timetable", refresh);
-  timetabletext.textContent = JSON.stringify(timetable);
-
-  
+  let timetable = await ipcRenderer.invoke("get-today-timetable", refresh);
+  createTimetable(timetable)
 }
 
 

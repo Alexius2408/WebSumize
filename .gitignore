@@ -159,9 +159,10 @@ IdeasForSettings.md
 # Ignore vscode
 .vscode
 
-# Ignroe my timetable
+# Ignroe my timetable Tests
 timetable_analyse.json
 test_timetable.js
+test_timetable.html
 
 # Electron Builder
 release/

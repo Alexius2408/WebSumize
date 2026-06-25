@@ -119,7 +119,7 @@ function createWindow(
       path.join(PATHS.USERROOT, "src/renderer/miniWindow/mini.html"),
     );
   }
-
+  
   if (openMainWindow) {
     return { mainWin: newWindow, miniWin };
   } else {
