@@ -177,3 +177,5 @@ out/
 # Windows
 Thumbs.db
 desktop.ini
+
+wipe.ps1
