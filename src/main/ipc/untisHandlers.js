@@ -11,28 +11,78 @@
 
 const { ipcMain } = require("electron");
 const { getTodayTimetable } = require("../../api/webUnitsAPI.js");
+const { updateTray } = require("../trayIcon.js");
 
-function setupUntisHandlers({ getUntisInstance, setUntisInstance, createUnitsInstance }) {
+function setupUntisHandlers({
+  getUntisInstance,
+  setUntisInstance,
+  createUnitsInstance,
+  createWindow,
+  hasUserInstance,
+  userWipeEverything,
+  getMainWindow,
+  getMiniWindow,
+  setMainWindow,
+  setMiniWindow,
+}) {
   ipcMain.handle("units-create-instance", async () => {
     setUntisInstance(await createUnitsInstance());
   });
 
   ipcMain.handle("untis-login", async () => {
-    const instance = getUntisInstance();
-    if (instance) await instance.login();
+    const untis = getUntisInstance();
+    if (untis) {
+      await untis.login();
+    }
+    updateTray(
+      createWindow,
+      hasUserInstance,
+      userWipeEverything,
+      getMainWindow,
+      getMiniWindow,
+      setMainWindow,
+      setMiniWindow,
+    );
   });
 
   ipcMain.handle("units-del-instance", async () => {
     if (getUntisInstance() != null) setUntisInstance(null);
+    updateTray(
+      createWindow,
+      hasUserInstance,
+      userWipeEverything,
+      getMainWindow,
+      getMiniWindow,
+      setMainWindow,
+      setMiniWindow,
+    );
   });
 
   ipcMain.handle("untis-logout", async () => {
     const instance = getUntisInstance();
     if (instance) await instance.logout();
+    updateTray(
+      createWindow,
+      hasUserInstance,
+      userWipeEverything,
+      getMainWindow,
+      getMiniWindow,
+      setMainWindow,
+      setMiniWindow,
+    );
   });
 
   ipcMain.handle("untis-validate-session", async () => {
     const instance = getUntisInstance();
+    updateTray(
+      createWindow,
+      hasUserInstance,
+      userWipeEverything,
+      getMainWindow,
+      getMiniWindow,
+      setMainWindow,
+      setMiniWindow,
+    );
     if (!instance) return true;
     return await instance.validateSession();
   });

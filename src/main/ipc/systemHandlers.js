@@ -11,14 +11,10 @@
 
 const { ipcMain, app } = require("electron");
 
-function setupSystemHandlers({ LogWrite }) {
+function setupSystemHandlers() {
   ipcMain.handle("get-app-path", (event, arguemnt) => {
     if (arguemnt === "") return app.getAppPath();
     return app.getAppPath(arguemnt);
-  });
-
-  ipcMain.handle("log-error", (event, msg) => {
-    LogWrite(msg);
   });
 }
 

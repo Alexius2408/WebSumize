@@ -23,7 +23,6 @@ const GENERALLY = {
 
 const PATHS = {
   USERROOT: null,
-  LOG_DIR_PATH: null,
   ICON_PATH: getTrayIcon(),
   CACHE_DIR: null,
   TIMETABLE_CACHE_FILE: null,
@@ -37,9 +36,8 @@ async function initalizeNullVariables(app) {
   GENERALLY.SCREEN_WIDTH = display.workAreaSize.width;
   GENERALLY.SCREEN_HEIGHT = display.workAreaSize.height;
 
-  // User Root and log file path
+  // User Root file path
   PATHS.USERROOT = app.getAppPath();
-  PATHS.LOG_DIR_PATH = path.join(app.getPath("userData"), "logs");
 
   PATHS.CACHE_DIR = path.join(app.getPath("userData"), "cache");
   PATHS.TIMETABLE_CACHE_FILE = path.join(PATHS.CACHE_DIR, "today-timetable.json");

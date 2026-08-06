@@ -14,7 +14,9 @@
 const { app, Menu, Tray } = require("electron");
 const { PATHS } = require("../utils/constants.js");
 
-function createTray({
+let tray = null
+let singleClickTimer = null;
+async function createTray({
   createWindow,
   hasUserInstance,
   userWipeEverything,
@@ -23,8 +25,11 @@ function createTray({
   setMainWindow,
   setMiniWindow,
 }) {
-  const tray = new Tray(PATHS.ICON_PATH);
-  let singleClickTimer = null;
+  if (!tray) {
+    tray = new Tray(PATHS.ICON_PATH);
+  }
+
+  const logedin = await hasUserInstance();
 
   const menu = Menu.buildFromTemplate([
     {
@@ -34,7 +39,7 @@ function createTray({
 
         if (!mainWin) {
           const result = createWindow(
-            !(await hasUserInstance()),
+            !logedin,
             true,
             getMainWindow,
             getMiniWindow,
@@ -50,14 +55,15 @@ function createTray({
       },
     },
     {
-      label: "Open Mini Window",
+      label: "Open Mini Window" + (logedin ? "" : " (Login required)"),
+      enabled: logedin,
       click: async () => {
         let miniWin = getMiniWindow();
 
         if (!miniWin) {
           const result = createWindow(
-            !(await hasUserInstance()),
-            !(await hasUserInstance()),
+            !logedin,
+            !logedin,
             getMainWindow,
             getMiniWindow,
             setMainWindow,
@@ -124,4 +130,74 @@ function createTray({
   });
 }
 
-module.exports = { createTray };
+async function updateTray (
+  createWindow,
+  hasUserInstance,
+  userWipeEverything,
+  getMainWindow,
+  getMiniWindow,
+  setMainWindow,
+  setMiniWindow,
+) {
+
+  if (!tray) {
+    tray = new Tray(PATHS.ICON_PATH);
+  }
+
+  const logedin = await hasUserInstance();
+
+  tray.setContextMenu(Menu.buildFromTemplate([ {
+      label: "Open Main Window",
+      click: async () => {
+        const mainWin = getMainWindow();
+
+        if (!mainWin) {
+          const result = createWindow(
+            !logedin,
+            true,
+            getMainWindow,
+            getMiniWindow,
+            setMainWindow,
+            setMiniWindow,
+          );
+
+          setMainWindow(result.mainWin);
+          setMiniWindow(result.miniWin);
+        } else {
+          mainWin.show();
+        }
+      },
+    },
+    {
+      label: "Open Mini Window" + (logedin ? "" : " (Login required)"),
+      enabled: logedin,
+      click: async () => {
+        let miniWin = getMiniWindow();
+
+        if (!miniWin) {
+          const result = createWindow(
+            !logedin,
+            !logedin,
+            getMainWindow,
+            getMiniWindow,
+            setMainWindow,
+            setMiniWindow,
+          );
+
+          setMainWindow(result.mainWin);
+          setMiniWindow(result.miniWin);
+        } else {
+          miniWin.show();
+        }
+      },
+    },
+    { label: "Logout", click: () => userWipeEverything() },
+    { label: "Exit", click: () => app.quit() },
+  ]));
+
+  }
+
+module.exports = {
+  createTray,
+  updateTray
+ };

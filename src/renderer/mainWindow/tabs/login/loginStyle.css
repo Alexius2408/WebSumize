@@ -81,6 +81,7 @@ p {
 }
 
 .form {
+  height: clamp(300px, 27vh, 420px);;
   width: clamp(300px, 27vw, 420px);
   padding: 1rem;
   border-radius: 12px;

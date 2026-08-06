@@ -175,12 +175,10 @@ async function login(event) {
     loginButton.firstChild.textContent = "LOGIN";
     loginButton.classList.remove("loginButtonLoading");
     loader.classList.add("hidden");
-    ipcRenderer.invoke(
-      "log-error",
-      "(File: loginScript.js) " + err.message || String(err),
-    );
     loginFailed.classList.remove("hidden");
     loginFailedInfo.classList.remove("hidden");
+
+    console.error("(File: loginScript.js) " + err.message || String(err));
   } finally {
     isSubmitting = false;
     setLoginButton();

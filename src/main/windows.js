@@ -68,6 +68,7 @@ function createWindow(
     icon: PATHS.ICON_PATH,
     skipTaskbar: !openMainWindow,
   });
+  newWindow.maximize();
 
   newWindow.webContents.setWindowOpenHandler(({ url }) => {
     openExternalSafe(url);

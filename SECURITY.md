@@ -24,7 +24,7 @@ When reporting, please include:
 - What the issue is
 - How to reproduce it
 - Where it happens in the app
-- Any relevant screenshots or logs
+- Any relevant screenshots
 
 ---
 

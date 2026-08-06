@@ -26,18 +26,24 @@ const {
   PATHS,
   initalizeNullVariables,
 } = require("../utils/constants.js");
+
 const {
   getData,
   delData,
   delTimetableCache,
 } = require("../services/storageService.js");
+
 const {
   getTodayTimetable,
   getAnyTimetable,
   getHomework,
   getExams,
 } = require("../api/webUnitsAPI.js");
-const { createTray } = require("./trayIcon.js");
+
+const { 
+  createTray,
+  updateTray
+ } = require("./trayIcon.js");
 
 const { createWindow } = require("./windows.js");
 const { setupIpcHandlers } = require("./ipc/mainHandeler.js");
@@ -82,7 +88,9 @@ app.whenReady().then(async () => {
     getMiniWindow,
     setMainWindow,
     setMiniWindow,
-    LogWrite,
+    createWindow,
+    hasUserInstance,
+    userWipeEverything,
   });
 
   createTray({
@@ -125,6 +133,7 @@ app.whenReady().then(async () => {
       try {
         if (untisInstance) {
           await untisInstance.login();
+          updateTray(createWindow, hasUserInstance, userWipeEverything, getMainWindow, getMiniWindow, setMainWindow, setMiniWindow)
         } else {
           const result = createWindow(
             true,
@@ -139,7 +148,7 @@ app.whenReady().then(async () => {
           miniWin = result.miniWin;
         }
       } catch (err) {
-        LogWrite("Problem with login (File: main.js) " + err.message);
+        console.error("Problem with login (File: main.js) " + err.message);
         const result = createWindow(
           true,
           true,
@@ -188,6 +197,9 @@ async function userWipeEverything() {
   if (miniWin) {
     miniWin.close();
   }
+
+  updateTray(createWindow, hasUserInstance, userWipeEverything, getMainWindow, getMiniWindow, setMainWindow, setMiniWindow)
+
   if (
     mainWin &&
     mainWin.webContents.getURL() !==
@@ -211,25 +223,4 @@ async function userWipeEverything() {
     mainWin = result.mainWin;
     miniWin = result.miniWin;
   }
-}
-
-function createLogDir() {
-  // Create logs directory if it doesn't exist
-  if (!fs.existsSync(PATHS.LOG_DIR_PATH)) {
-    fs.mkdirSync(PATHS.LOG_DIR_PATH, { recursive: true });
-  }
-}
-
-function LogWrite(message) {
-  createLogDir();
-
-  const date = new Date();
-  const day = date.toLocaleDateString("sv-SE");
-  const time = date.toLocaleTimeString("sv-SE");
-  const logFilePath = path.join(PATHS.LOG_DIR_PATH, `${day}--Log.log`);
-  const shortMsg = message.replaceAll("\n", " ").slice(0, 200); // limit to 200 chars
-
-  const logMessage = `[${day} ${time}]:  ${shortMsg}\n\n`;
-
-  fs.appendFileSync(logFilePath, logMessage, "utf8");
 }
