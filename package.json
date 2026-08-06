@@ -4,8 +4,10 @@
   "description": "",
   "main": "./src/main/main.js",
   "dependencies": {
-    "is-online": "^8.5.1",
+    "got": "^15.1.0",
+    "is-online": "^12.0.2",
     "keytar": "^7.9.0",
+    "undici": "^8.10.0",
     "webuntis": "^2.2.1"
   },
   "scripts": {
