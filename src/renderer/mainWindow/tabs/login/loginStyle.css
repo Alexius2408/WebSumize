@@ -47,7 +47,7 @@ a:hover {
 }
 
 h1 {
-  font-size: 2rem;
+  font-size: 2.5rem;
 }
 
 p {
@@ -61,7 +61,7 @@ p {
 }
 
 .logo {
-  padding: 20px 0 0 0;
+  padding: 25px;
   border-radius: 50%;
   background: radial-gradient(
     circle,
@@ -73,7 +73,7 @@ p {
 .logo img {
   margin: 1rem 1rem 0 1rem;
   display: block;
-  width: clamp(120px, 12vw, 200px);
+  width: clamp(120px, 18vw, 220px);
   height: auto;
   object-fit: contain;
   filter: brightness(80%);
@@ -81,8 +81,7 @@ p {
 }
 
 .form {
-  height: clamp(300px, 27vh, 420px);;
-  width: clamp(300px, 27vw, 420px);
+  width: clamp(300px, 28vw, 420px);
   padding: 1rem;
   border-radius: 12px;
   background-color: var(--bg-color);
@@ -149,11 +148,11 @@ input:disabled {
 }
 
 button {
-  margin: 3vh 0 0 0;
+  margin: 5vh 0 0 0;
   width: 100%;
   background-color: var(--bg-color-login);
   color: var(--text-color);
-  padding: clamp(12px, 1.1vw, 15px) clamp(10px, 1vw, 13px);
+  padding: clamp(12px, 1.2vw, 15px) clamp(10px, 1vw, 13px);
   border: 1.5px solid var(--border-color);
   border-radius: 10px;
   outline: 0;
@@ -235,7 +234,6 @@ button:disabled {
 
 @media screen and (max-width: 1464px) {
   .login-container {
-    max-height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -302,6 +300,7 @@ button:disabled {
   animation-fill-mode: both;
   animation: bblFadInOut 1.8s infinite ease-in-out;
 }
+
 .loader {
   color: #fff;
   font-size: 7px;
@@ -313,16 +312,19 @@ button:disabled {
   transform: translateZ(0);
   animation-delay: -0.16s;
 }
+
 .loader:before,
 .loader:after {
   content: "";
   position: absolute;
   top: 0;
 }
+
 .loader:before {
   left: -3.5em;
   animation-delay: -0.32s;
 }
+
 .loader:after {
   left: 3.5em;
 }
