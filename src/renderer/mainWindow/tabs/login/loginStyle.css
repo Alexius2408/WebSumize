@@ -73,15 +73,15 @@ p {
 .logo img {
   margin: 1rem 1rem 0 1rem;
   display: block;
-  width: clamp(120px, 18vw, 220px);
-  height: auto;
+  width: auto;
+  height: clamp(100px, 13vw, 200px);
   object-fit: contain;
   filter: brightness(80%);
   border-radius: 50%;
 }
 
 .form {
-  width: clamp(300px, 28vw, 420px);
+  width: clamp(330px, 19vw, 420px);
   padding: 1rem;
   border-radius: 12px;
   background-color: var(--bg-color);
