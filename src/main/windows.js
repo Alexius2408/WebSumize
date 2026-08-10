@@ -120,8 +120,11 @@ function createWindow(
       path.join(PATHS.USERROOT, "src/renderer/miniWindow/mini.html"),
     );
   }
-   // Menu.setApplicationMenu(null);
-  
+
+  if (!GENERALLY.DEVELOPMENT) {
+    Menu.setApplicationMenu(null);
+  };
+
   if (openMainWindow) {
     return { mainWin: newWindow, miniWin };
   } else {

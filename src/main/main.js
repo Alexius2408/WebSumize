@@ -40,10 +40,7 @@ const {
   getExams,
 } = require("../api/webUnitsAPI.js");
 
-const { 
-  createTray,
-  updateTray
- } = require("./trayIcon.js");
+const { createTray, updateTray } = require("./trayIcon.js");
 
 const { createWindow } = require("./windows.js");
 const { setupIpcHandlers } = require("./ipc/mainHandeler.js");
@@ -133,7 +130,15 @@ app.whenReady().then(async () => {
       try {
         if (untisInstance) {
           await untisInstance.login();
-          updateTray(createWindow, hasUserInstance, userWipeEverything, getMainWindow, getMiniWindow, setMainWindow, setMiniWindow)
+          updateTray(
+            createWindow,
+            hasUserInstance,
+            userWipeEverything,
+            getMainWindow,
+            getMiniWindow,
+            setMainWindow,
+            setMiniWindow,
+          );
         } else {
           const result = createWindow(
             true,
@@ -175,8 +180,14 @@ async function hasUserInstance() {
 
 async function createUnitsInstance() {
   let data = await getData();
-  if (!data) return null;
   let userData = JSON.parse(data);
+
+  for (const value of Object.values(userData)) {
+    if (value === "") {
+      return null;
+    }
+  }
+
   return new WebUntis(
     userData.schoolName,
     userData.username,
@@ -198,7 +209,15 @@ async function userWipeEverything() {
     miniWin.close();
   }
 
-  updateTray(createWindow, hasUserInstance, userWipeEverything, getMainWindow, getMiniWindow, setMainWindow, setMiniWindow)
+  updateTray(
+    createWindow,
+    hasUserInstance,
+    userWipeEverything,
+    getMainWindow,
+    getMiniWindow,
+    setMainWindow,
+    setMiniWindow,
+  );
 
   if (
     mainWin &&

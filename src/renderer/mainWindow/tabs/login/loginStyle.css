@@ -7,6 +7,7 @@
   --bg-color-login: #cc4019;
   --bg-color-login-loading: #cc401965;
   --passwordvisibility-color: #191919;
+  --error:  #f80000;
 }
 
 .hidden {
@@ -259,14 +260,14 @@ button:disabled {
   font-size: 0.97rem;
   text-align: center;
   width: 100%;
-  color: #f80000;
+  color: var(--error);
 }
 
 .loginFailed {
   margin-top: 10px;
   text-align: center;
   width: 100%;
-  color: #f80000;
+  color: var(--error);
 }
 
 .loginFailedLink {
