@@ -1,8 +1,23 @@
 {
   "name": "websumize",
   "version": "0.0.42",
-  "description": "",
+  "description": "WebSumize is a simple desktop app that summarizes WebUnits data like schedule, exams and homework using JavaScript and Electron.",
+  "productName": "WebSumize",
   "main": "./src/main/main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron .",
+    "test": "echo \"No tests specified\""
+  },
+  "keywords": [
+    "websumize",
+    "electron",
+    "web",
+    "WebUntis",
+    "productivity"
+  ],
+  "author": "Alexius2408",
+  "license": "SEE LICENSE IN LICENSE",
   "dependencies": {
     "got": "^15.1.0",
     "is-online": "^12.0.2",
@@ -10,13 +25,6 @@
     "undici": "^8.10.0",
     "webuntis": "^2.2.1"
   },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "electron ."
-  },
-  "keywords": [],
-  "author": "Alexius2408",
-  "license": "ISC",
   "devDependencies": {
     "electron": "^42.3.3"
   }
