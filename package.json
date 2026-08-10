@@ -1,6 +1,6 @@
 {
   "name": "websumize",
-  "version": "0.0.42",
+  "version": "0.0.43",
   "description": "WebSumize is a simple desktop app that summarizes WebUnits data like schedule, exams and homework using JavaScript and Electron.",
   "productName": "WebSumize",
   "main": "./src/main/main.js",

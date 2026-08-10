@@ -181,11 +181,14 @@ async function hasUserInstance() {
 async function createUnitsInstance() {
   let data = await getData();
   let userData = JSON.parse(data);
-
-  for (const value of Object.values(userData)) {
-    if (value === "") {
-      return null;
+  try {
+    for (const value of Object.values(userData)) {
+      if (value === "") {
+        return null;
+      }
     }
+  } catch {
+    return null;
   }
 
   return new WebUntis(
