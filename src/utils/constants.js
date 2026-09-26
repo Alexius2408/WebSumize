@@ -18,7 +18,7 @@ const GENERALLY = {
   SCREEN_WIDTH: null,
   SCREEN_HEIGHT: null,
   APP_NAME: "WebSumize",
-  APP_VERSION: "0.1.0-beta",
+  APP_VERSION: null,
   // Temporary placeholder — replace before production
   HELP_WEBSITE_URL: "https://example.com",
 };
@@ -31,12 +31,14 @@ const PATHS = {
 };
 
 async function initalizeNullVariables(app) {
-  // Now, that the app is ready we can set the varaibles the value
 
   // Screen size
   const display = screen.getPrimaryDisplay();
   GENERALLY.SCREEN_WIDTH = display.workAreaSize.width;
   GENERALLY.SCREEN_HEIGHT = display.workAreaSize.height;
+
+  // App version
+  GENERALLY.APP_VERSION = app.getVersion();
 
   // User Root file path
   PATHS.USERROOT = app.getAppPath();
