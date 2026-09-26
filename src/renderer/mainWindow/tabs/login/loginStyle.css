@@ -82,7 +82,7 @@ p {
 }
 
 .form {
-  width: clamp(330px, 19vw, 420px);
+  width: clamp(330px, 19vw, 450px);
   padding: 1rem;
   border-radius: 12px;
   background-color: var(--bg-color);

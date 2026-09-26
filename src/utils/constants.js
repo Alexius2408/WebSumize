@@ -19,7 +19,8 @@ const GENERALLY = {
   SCREEN_HEIGHT: null,
   APP_NAME: "WebSumize",
   APP_VERSION: "0.1.0-beta",
-  HELP_WEBSITE_URL: "example.com",
+  // Temporary placeholder — replace before production
+  HELP_WEBSITE_URL: "https://example.com",
 };
 
 const PATHS = {

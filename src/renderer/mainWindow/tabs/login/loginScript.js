@@ -29,6 +29,9 @@ const passwordVisibilityToggle = document.querySelectorAll(
 );
 let isSubmitting = false;
 
+
+document.querySelector(".loginFailedLink").href = GENERALLY.HELP_WEBSITE_URL;
+
 passwordVisibilityToggle.forEach((element) => {
   element.addEventListener("click", () => {
     const isPassword = passwordInput.getAttribute("type") === "password";
