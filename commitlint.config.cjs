@@ -14,18 +14,18 @@ module.exports = {
 Invalid commit message!
 
 Allowed types:
-- feat:     New feature
-- fix:      Bug fix
-- feat!:    Breaking change (triggers a new MAJOR release)
-- docs:     Documentation
-- style:    Formatting only
-- refactor: Code restructure (no feature/fix)
-- perf:     Performance improvement
-- test:     Tests
-- build:    Dependencies/build system
-- ci:       CI/CD changes
-- chore:    Misc maintenance
-- revert:   Undo a commit
+- feat!:    Breaking change          -> new version X.0.0
+- feat:     New feature              -> new version x.Y.0
+- fix:      Bug fix                  -> new version x.y.Z
+- perf:     Performance improvement  -> new version x.y.Z
+- style:    Styling changes          -> new version x.y.Z
+- docs:     Documentation            (no new version)
+- refactor: Code restructure         (no new version)
+- test:     Tests                    (no new version)
+- build:    Dependencies/build system (no new version)
+- ci:       CI/CD changes            (no new version)
+- chore:    Misc maintenance         (no new version)
+- revert:   Undo a commit            (no new version)
 
 💡 Examples:
 - feat: add settings page
