@@ -7,7 +7,9 @@
   "scripts": {
     "start": "electron .",
     "dev": "electron .",
-    "test": "echo \"No tests specified\""
+    "test": "echo \"No tests specified\"",
+    "prepare": "husky",
+    "commit": "cz"
   },
   "keywords": [
     "websumize",
@@ -26,6 +28,25 @@
     "webuntis": "^2.2.1"
   },
   "devDependencies": {
-    "electron": "^42.3.3"
+    "@commitlint/cli": "^21.2.3",
+    "@commitlint/config-conventional": "^21.2.3",
+    "@semantic-release/changelog": "^7.0.0",
+    "@semantic-release/commit-analyzer": "^13.0.1",
+    "@semantic-release/git": "^11.0.1",
+    "@semantic-release/github": "^12.0.10",
+    "@semantic-release/npm": "^13.2.0",
+    "@semantic-release/release-notes-generator": "^14.1.1",
+    "commitizen": "^4.3.2",
+    "conventional-changelog-conventionalcommits": "^9.3.1",
+    "cz-conventional-changelog": "^3.3.0",
+    "electron": "^42.3.3",
+    "husky": "^9.1.7",
+    "semantic-release": "^25.0.9"
+  },
+  "private": true,
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }
