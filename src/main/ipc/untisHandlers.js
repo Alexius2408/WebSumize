@@ -31,18 +31,24 @@ function setupUntisHandlers({
 
   ipcMain.handle("untis-login", async () => {
     const untis = getUntisInstance();
-    if (untis) {
-      await untis.login();
+    try {
+      if (untis) {
+        await untis.login();
+      }
+    } catch (err) {
+      setUntisInstance(null);
+      throw err;
+    } finally {
+      updateTray(
+        createWindow,
+        hasUserInstance,
+        userWipeEverything,
+        getMainWindow,
+        getMiniWindow,
+        setMainWindow,
+        setMiniWindow,
+      );
     }
-    updateTray(
-      createWindow,
-      hasUserInstance,
-      userWipeEverything,
-      getMainWindow,
-      getMiniWindow,
-      setMainWindow,
-      setMiniWindow,
-    );
   });
 
   ipcMain.handle("units-del-instance", async () => {
@@ -60,7 +66,13 @@ function setupUntisHandlers({
 
   ipcMain.handle("untis-logout", async () => {
     const instance = getUntisInstance();
-    if (instance) await instance.logout();
+    if (instance) {
+      try {
+        await instance.logout();
+      } catch (err) {
+        console.error("Problem with logout (File: untisHandlers.js) " + err.message);
+      }
+    }
     updateTray(
       createWindow,
       hasUserInstance,

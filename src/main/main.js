@@ -10,19 +10,13 @@
 */
 
 const {
-  app,
-  BrowserWindow,
-  ipcMain,
-  shell,
-  Menu,
-  screen,
+  app
 } = require("electron");
 const path = require("path");
 const { WebUntis } = require("webuntis");
 const fs = require("fs");
 
 const {
-  GENERALLY,
   PATHS,
   initalizeNullVariables,
 } = require("../utils/constants.js");
@@ -33,13 +27,6 @@ const {
   delTimetableCache,
 } = require("../services/storageService.js");
 
-const {
-  getTodayTimetable,
-  getAnyTimetable,
-  getHomework,
-  getExams,
-} = require("../api/webUnitsAPI.js");
-
 const { createTray, updateTray } = require("./trayIcon.js");
 
 const { createWindow } = require("./windows.js");
@@ -48,8 +35,6 @@ const { setupIpcHandlers } = require("./ipc/mainHandeler.js");
 let untisInstance = null;
 let mainWin = null;
 let miniWin = null;
-let tray;
-let trayLeftClicked = 0;
 
 function getUntisInstance() {
   return untisInstance;
@@ -154,6 +139,7 @@ app.whenReady().then(async () => {
         }
       } catch (err) {
         console.error("Problem with login (File: main.js) " + err.message);
+        untisInstance = null;
         const result = createWindow(
           true,
           true,
@@ -203,7 +189,11 @@ async function createUnitsInstance() {
 
 async function userWipeEverything() {
   if (untisInstance) {
-    await untisInstance.logout();
+    try {
+      await untisInstance.logout();
+    } catch (err) {
+      console.error("Problem with logout (File: main.js) " + err.message);
+    }
   }
   untisInstance = null;
   await delData();

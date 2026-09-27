@@ -9,7 +9,7 @@
  Description: Handles the login process in the login window. The login wndow gets shown if there is no local User Data
 */
 
-const { setData } = require("../../../../services/storageService.js");
+const { setData, delData } = require("../../../../services/storageService.js");
 const { ipcRenderer } = require("electron");
 const { GENERALLY } = require("../../../../utils/constants.js");
 const isOnline = require('is-online');
@@ -75,7 +75,6 @@ const texts = [
   "If you don't like the look, change it!",
   "Future updates coming soon!",
   "Please log in to continue!",
-  "For errors, check the log file for more details!",
   "Use the tray icon to navigate.",
   "Left-click the tray icon to open a small window.",
   "Double-click the tray icon to open the main page.",
@@ -182,6 +181,8 @@ async function login(event) {
     loginFailedInfo.classList.remove("hidden");
 
     console.error("(File: loginScript.js) " + err.message || String(err));
+
+    await delData();
   } finally {
     isSubmitting = false;
     setLoginButton();
