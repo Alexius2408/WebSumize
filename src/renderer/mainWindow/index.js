@@ -9,24 +9,48 @@
  Description: This is the entry point for the main window. It shows the timetable for the current day.
 */
 
-const timetable = document.getElementById("timetable");
 const timetablebox = document.getElementById("timetable");
 
 const { ipcRenderer } = window.require("electron");
 
 const { delData, delTimetableCache } = require("../../services/storageService.js");
-const { createTimetable } = require("./index_createTimetable.js")
+const { createTimetable, createSkeleton } = require("./index_createTimetable.js")
 
 const logoutbutton = document.getElementById("logoutBtn");
 const refreshButton = document.getElementById("refreshBtn");
 
-async function loadTimetable(refresh = false) {
-  if (refresh) {
-    timetablebox.innerHTML = "";
-    await new Promise((resolve) => setTimeout(resolve, 500));
+const SKELETON_DELAY_MS = 120;
+const SKELETON_MIN_VISIBLE_MS = 300;
+const FADE_MS = 150;
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function fadeSwap(mutate) {
+  if (!timetablebox.classList.contains("is-fading")) {
+    timetablebox.classList.add("is-fading");
+    await sleep(FADE_MS);
   }
-  let timetable = await ipcRenderer.invoke("get-today-timetable", refresh);
-  createTimetable(timetable)
+  mutate();
+  timetablebox.classList.remove("is-fading");
+}
+
+async function loadTimetable(refresh = false) {
+  let skeletonShown = null;
+  const skeletonTimer = setTimeout(() => {
+    skeletonShown = fadeSwap(createSkeleton).then(() => performance.now());
+  }, SKELETON_DELAY_MS);
+
+  const timetable = await ipcRenderer.invoke("get-today-timetable", refresh);
+  clearTimeout(skeletonTimer);
+
+  if (skeletonShown) {
+    const shownAt = await skeletonShown;
+    await sleep(SKELETON_MIN_VISIBLE_MS - (performance.now() - shownAt));
+  }
+
+  await fadeSwap(() => createTimetable(timetable));
 }
 
 
@@ -44,6 +68,7 @@ logoutbutton.addEventListener("click", async (event) => {
 loadTimetable();
 
 refreshButton.addEventListener("click", async (event) => {
+  
   refreshButton.style.animation = "fullrotate 0.5s ";
   await loadTimetable(true);
   refreshButton.style.animation = "";

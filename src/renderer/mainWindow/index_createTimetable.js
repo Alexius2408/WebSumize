@@ -1,11 +1,14 @@
 const { WebUntis } = require("webuntis");
-const fs = require("fs");
 
 const timetablebox = document.getElementById("timetable");
 
+const DEFAULT_SKELETON_ROWS = 5;
+
+let lastLayout = Array(DEFAULT_SKELETON_ROWS).fill(1);
+
 function formatUntisTime(time) {
   const date = WebUntis.convertUntisTime(time);
-  return date.toLocaleTimeString("de-AT", {
+  return date.toLocaleTimeString(navigator.language, {
     hour: "2-digit",
     minute: "2-digit",
   });
@@ -24,13 +27,38 @@ function createElements(timetable) {
 }
 
 async function createTimetable(timetable) {
+  timetablebox.innerHTML = ``;
   timetable.sort((a, b) => a.startTime - b.startTime);
 
   timetable = getLessonsOrganisedByTime(timetable);
+  lastLayout = timetable.map((group) => group.length);
 
   timetable.forEach((element) => {
     createElements(element);
   });
+}
+
+function createSkeleton() {
+  timetablebox.innerHTML = ``;
+
+  lastLayout.forEach((size) => {
+    const lectures = Array.from({ length: size }, () => createSkeletonLecture());
+    timetablebox.appendChild(
+      size === 1 ? lectures[0] : crateMultipleLecture(lectures),
+    );
+  });
+}
+
+function createSkeletonLecture() {
+  const lecture = document.createElement("div");
+  lecture.classList.add("timetable-lecture", "skeleton");
+
+  lecture.innerHTML = `
+    <p class="start-time">&nbsp;</p>
+    <p class="lecture-name">&nbsp;</p>
+    <p class="end-time">&nbsp;</p>`;
+
+  return lecture;
 }
 
 function getLessonsOrganisedByTime(timetable) {
@@ -112,5 +140,6 @@ function crateMultipleLecture(timetableList) {
 }
 
 module.exports = {
-    createTimetable
-}
+  createTimetable,
+  createSkeleton,
+};

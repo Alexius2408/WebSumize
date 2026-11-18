@@ -12,37 +12,39 @@
 const { setData, delData } = require("../../../../services/storageService.js");
 const { ipcRenderer } = require("electron");
 const { GENERALLY } = require("../../../../utils/constants.js");
-const isOnline = require('is-online');
+const isOnline = require("is-online");
 
 const loginButton = document.getElementById("loginButton");
 const usernameInput = document.getElementById("username");
-const passwordInput = document.getElementById("password");
+const secretInput = document.getElementById("secret2FA");
+const normal_login_box = document.querySelector(".normal_login_details");
+const secretBox = document.querySelector(".FA_input_box");
 const schoolNameInput = document.getElementById("schoolName");
 const schoolUrlInput = document.getElementById("schoolUrl");
+const passwordInput = document.getElementById("password");
 
 const loginFailed = document.getElementById("loginFailedInfo");
+const longText = document.getElementById("login-text");
 const loginFailedInfo = document.getElementById("loginFailedInfoLink");
 const inputs = document.querySelectorAll(".input");
 const loader = document.getElementById("loaderAnim");
-const passwordVisibilityToggle = document.querySelectorAll(
-  ".passwordvisibility",
-);
-let isSubmitting = false;
 
+let isSubmitting = false;
+let FA_input_required = false;
+let data = undefined;
 
 document.querySelector(".loginFailedLink").href = GENERALLY.HELP_WEBSITE_URL;
 
-passwordVisibilityToggle.forEach((element) => {
-  element.addEventListener("click", () => {
-    const isPassword = passwordInput.getAttribute("type") === "password";
-    passwordInput.setAttribute("type", isPassword ? "text" : "password");
+document.querySelectorAll(".password-toggle").forEach((toggle) => {
+  const input = toggle.closest(".input-box").querySelector(".input");
+  const icons = toggle.querySelectorAll(".password-icon");
+  const visiblePlaceholder = input.placeholder;
 
-    document.getElementById("passwordNotVisible").classList.toggle("hidden");
-    document.getElementById("passwordVisible").classList.toggle("hidden");
-
-    passwordInput.placeholder = isPassword
-      ? "SchoolPassword123"
-      : "●●●●●●●●●●●●●●●●●";
+  toggle.addEventListener("click", () => {
+    const isPassword = input.type === "password";
+    input.type = isPassword ? "text" : "password";
+    input.placeholder = isPassword ? visiblePlaceholder : "●●●●●●●●●●●●●●●●●";
+    icons.forEach((icon) => icon.classList.toggle("hidden"));
   });
 });
 
@@ -55,6 +57,9 @@ loginFailedInfo.classList.add("hidden");
 function setLoginButton() {
   let hasEmpty = false;
   for (const input of inputs) {
+    if (input.parentElement.parentElement.classList.contains("hidden")) {
+      continue;
+    }
     if (input.value.trim() === "") {
       hasEmpty = true;
       break;
@@ -145,24 +150,44 @@ async function login(event) {
   isSubmitting = true;
   setLoginButton();
   try {
-    const username = usernameInput.value;
-    const password = passwordInput.value;
-    const schoolName = schoolNameInput.value;
-    const schoolUrl = schoolUrlInput.value
-      .replace(/^https?:\/\//i, "")
-      .replace(/^www\./i, "");
-    let data = JSON.stringify({
-      username: String(username),
-      password: String(password),
-      schoolName: String(schoolName),
-      schoolUrl: String(schoolUrl),
-    });
-    await setData(data);
+    if (!FA_input_required) {
+      const username = usernameInput.value;
+      const password = passwordInput.value;
+      const schoolName = schoolNameInput.value;
+      const schoolUrl = schoolUrlInput.value
+        .replace(/^https?:\/\//i, "")
+        .replace(/^www\./i, "");
+      data = JSON.stringify({
+        username: String(username),
+        password: String(password),
+        schoolName: String(schoolName),
+        schoolUrl: String(schoolUrl),
+      });
+    } else {
+      data = JSON.stringify({
+        ...JSON.parse(data),
+        secretKey: String(secretInput.value).replace(/\s/g, "").toUpperCase(),
+      });
+    }
+
     loginButton.firstChild.textContent = "";
     loginButton.classList.add("loginButtonLoading");
     loader.classList.remove("hidden");
-    await ipcRenderer.invoke("units-create-instance");
-    await ipcRenderer.invoke("untis-login");
+    await ipcRenderer.invoke("units-create-instance", data);
+    const needs2FA = await ipcRenderer.invoke("untis-login");
+    if (needs2FA["2FA"]) {
+      FA_input_required = true;
+      secretBox.classList.remove("hidden");
+      normal_login_box.classList.add("hidden");
+      longText.textContent = "Enter 2FA secret Key to continue";
+      loginButton.firstChild.textContent = "LOGIN";
+      loginButton.classList.remove("loginButtonLoading");
+      loader.classList.add("hidden");
+      return;
+    }
+
+    await setData(data);
+
     await ipcRenderer.invoke(
       "switch-window",
       "src/renderer/mainWindow/index.html",

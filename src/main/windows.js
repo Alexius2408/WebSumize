@@ -11,12 +11,9 @@
 */
 
 const {
-  app,
   BrowserWindow,
-  ipcMain,
   shell,
   Menu,
-  screen,
   nativeTheme,
 } = require("electron");
 const path = require("path");
@@ -58,7 +55,7 @@ function createWindow(
     height: openMainWindow
       ? GENERALLY.SCREEN_HEIGHT
       : Math.floor(GENERALLY.SCREEN_HEIGHT * 0.6),
-    backgroundColor: nativeTheme.shouldUseDarkColors ? "#191a1b" : "#fffdf7",
+    backgroundColor: "#191a1b",
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,

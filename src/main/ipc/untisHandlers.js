@@ -25,19 +25,23 @@ function setupUntisHandlers({
   setMainWindow,
   setMiniWindow,
 }) {
-  ipcMain.handle("units-create-instance", async () => {
-    setUntisInstance(await createUnitsInstance());
+  ipcMain.handle("units-create-instance", async (event, data) => {
+    setUntisInstance(await createUnitsInstance(data));
   });
 
   ipcMain.handle("untis-login", async () => {
     const untis = getUntisInstance();
+    let needs2FA = false;
     try {
       if (untis) {
         await untis.login();
       }
     } catch (err) {
-      setUntisInstance(null);
-      throw err;
+      needs2FA = err.message.includes("2FA");
+      if (!needs2FA) {
+        setUntisInstance(null);
+        throw err;
+      }
     } finally {
       updateTray(
         createWindow,
@@ -49,6 +53,7 @@ function setupUntisHandlers({
         setMiniWindow,
       );
     }
+    return { "2FA": needs2FA };
   });
 
   ipcMain.handle("units-del-instance", async () => {

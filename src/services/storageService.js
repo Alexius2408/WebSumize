@@ -23,7 +23,9 @@ async function getData() {
 }
 
 async function delData() {
-  await keytar.deletePassword(GENERALLY.APP_NAME, "currentLoginedUser");
+  if (getData()) {
+    await keytar.deletePassword(GENERALLY.APP_NAME, "currentLoginedUser");
+  }
 }
 
 function createCacheDir() {
@@ -43,7 +45,7 @@ async function getTimetableCache() {
 }
 
 async function saveTimetableCache(timetableData) {
-  createCacheDir()
+  createCacheDir();
   timetableData.sort((a, b) => a.startTime - b.startTime);
   const cacheData = {
     timetable: timetableData,

@@ -10,7 +10,6 @@
  Link to WebUntis API: https://github.com/SchoolUtils/WebUntis
 */
 
-const { webuntis } = require("webuntis");
 const {
   getTimetableCache,
   saveTimetableCache,

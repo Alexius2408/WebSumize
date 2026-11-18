@@ -9,17 +9,13 @@
  Description: Main process of WebSumize. Manages IPC, user authentication, and WebUntis data.
 */
 
-const {
-  app
-} = require("electron");
+const { app } = require("electron");
 const path = require("path");
-const { WebUntis } = require("webuntis");
+const { WebUntis, WebUntisSecretAuth } = require("webuntis");
+const { authenticator: Authenticator } = require("otplib");
 const fs = require("fs");
 
-const {
-  PATHS,
-  initalizeNullVariables,
-} = require("../utils/constants.js");
+const { PATHS, initalizeNullVariables } = require("../utils/constants.js");
 
 const {
   getData,
@@ -164,9 +160,12 @@ async function hasUserInstance() {
   return untisInstance != null;
 }
 
-async function createUnitsInstance() {
-  let data = await getData();
-  let userData = JSON.parse(data);
+async function createUnitsInstance(data) {
+  if (!data) {
+    data = await getData();
+  }
+  userData = JSON.parse(data);
+
   try {
     for (const value of Object.values(userData)) {
       if (value === "") {
@@ -177,14 +176,29 @@ async function createUnitsInstance() {
     return null;
   }
 
-  return new WebUntis(
-    userData.schoolName,
-    userData.username,
-    userData.password,
-    userData.schoolUrl,
-    undefined,
-    true,
-  );
+  let untisObject = undefined;
+
+  if (userData.secretKey) {
+    untisObject = new WebUntisSecretAuth(
+      userData.schoolName,
+      userData.username,
+      userData.secretKey,
+      userData.schoolUrl,
+      "Awesome",
+      Authenticator,
+      true,
+    );
+  } else {
+    untisObject = new WebUntis(
+      userData.schoolName,
+      userData.username,
+      userData.password,
+      userData.schoolUrl,
+      undefined,
+      true,
+    );
+  }
+  return untisObject;
 }
 
 async function userWipeEverything() {

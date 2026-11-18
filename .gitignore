@@ -56,8 +56,23 @@ build/Release
 !.env.example
 
 # =========================
+# Packaged app / installers
+# =========================
+*.exe
+*.msi
+*.dmg
+*.pkg
+*.AppImage
+*.deb
+*.rpm
+*.snap
+*.tgz
+*.blockmap
+
+# =========================
 # Editor / OS files
 # =========================
+.idea/
 .vscode/
 .vscode-test/
 .DS_Store
@@ -103,13 +118,9 @@ vite.config.*.timestamp-*
 .tern-port
 
 # =========================
-# Personal / project-specific
+# Personal
 # =========================
-TODO.md
-IdeasForSettings.md
-
-timetable_analyse.json
-test_timetable.js
-test_timetable.html
-
-wipe.ps1
+testing&ideas/
+.claude/
+CLAUDE.md
+.mcp.json

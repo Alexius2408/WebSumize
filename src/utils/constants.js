@@ -14,7 +14,7 @@ const path = require("path");
 const { screen } = require("electron");
 
 const GENERALLY = {
-  DEVELOPMENT: true,
+  DEVELOPMENT: false,
   SCREEN_WIDTH: null,
   SCREEN_HEIGHT: null,
   APP_NAME: "WebSumize",
