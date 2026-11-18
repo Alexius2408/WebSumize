@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.1.0](https://github.com/Alexius2408/WebSumize/compare/v0.0.44...v0.1.0) (2026-11-18)
+
+### New Features
+
+* add 2FA login, timetable skeleton loader and final logo ([83dc2e9](https://github.com/Alexius2408/WebSumize/commit/83dc2e90f2bd641f78a0fbd4f9b98b6f458d23c6))
+
+### Bug Fixes
+
+* **login:** wrong login data gets now deleted if it can't login to WebUntis ([bd1237c](https://github.com/Alexius2408/WebSumize/commit/bd1237c4bac48eaf219890faced58094e06c197a))
+* **storageservice.js:** reuse the saved timetable for 30 minutes ([76cdc6e](https://github.com/Alexius2408/WebSumize/commit/76cdc6e8c883d24f84b1b60ef3af7c66114ccc5b))
+
 ## [0.0.44](https://github.com/Alexius2408/WebSumize/compare/v0.0.43...v0.0.44) (2026-09-26)
 
 ### Bug Fixes
