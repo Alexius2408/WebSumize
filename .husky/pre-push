@@ -1,0 +1,48 @@
+#!/bin/sh
+remote="$1"
+pushed=""
+
+while read local_ref local_sha remote_ref remote_sha; do
+  if [ "$remote_ref" = "refs/heads/main" ] && [ "$local_sha" != "0000000000000000000000000000000000000000" ]; then
+    pushed="$local_sha"
+  fi
+done
+
+if [ -z "$pushed" ]; then
+  exit 0
+fi
+
+(
+  remote_main() {
+    git ls-remote "$remote" refs/heads/main | cut -f1
+  }
+
+  tries=0
+  while [ "$(remote_main)" != "$pushed" ]; do
+    tries=$((tries + 1))
+    if [ $tries -gt 24 ]; then
+      echo "$(date): push of $pushed never showed up on $remote/main."
+      exit 0
+    fi
+    sleep 5
+  done
+
+  tries=0
+  while [ "$(remote_main)" = "$pushed" ]; do
+    tries=$((tries + 1))
+    if [ $tries -gt 40 ]; then
+      echo "$(date): no release commit after 10 minutes, nothing to pull."
+      exit 0
+    fi
+    sleep 15
+  done
+
+  if [ "$(git rev-parse --abbrev-ref HEAD)" = "main" ]; then
+    git pull --ff-only "$remote" main
+  else
+    git fetch "$remote" main
+  fi
+  echo "$(date): done."
+) < /dev/null > .git/pull-after-release.log 2>&1 &
+
+exit 0

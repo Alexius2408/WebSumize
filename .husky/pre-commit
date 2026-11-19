@@ -1,0 +1,5 @@
+#!/bin/sh
+if git show :src/utils/constants.js | grep -Eq "DEVELOPMENT:[[:space:]]*true"; then
+  echo "Commit blocked: GENERALLY.DEVELOPMENT is true in src/utils/constants.js. Set it to false first."
+  exit 1
+fi
