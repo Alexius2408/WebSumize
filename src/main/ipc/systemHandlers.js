@@ -10,11 +10,16 @@
 */
 
 const { ipcMain, app } = require("electron");
+const { default: isOnline } = require("is-online");
 
 function setupSystemHandlers() {
   ipcMain.handle("get-app-path", (event, arguemnt) => {
     if (arguemnt === "") return app.getAppPath();
     return app.getAppPath(arguemnt);
+  });
+
+  ipcMain.handle("is-online", async () => {
+    return await isOnline();
   });
 }
 

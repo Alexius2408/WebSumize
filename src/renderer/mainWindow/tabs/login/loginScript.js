@@ -12,7 +12,6 @@
 const { setData, delData } = require("../../../../services/storageService.js");
 const { ipcRenderer } = require("electron");
 const { GENERALLY } = require("../../../../utils/constants.js");
-const isOnline = require("is-online");
 
 const loginButton = document.getElementById("loginButton");
 const usernameInput = document.getElementById("username");
@@ -236,7 +235,7 @@ setLoginButton();
 let lastConectionState = null;
 
 setInterval(async () => {
-  const online = await isOnline();
+  const online = await ipcRenderer.invoke("is-online");
 
   if (online !== lastConectionState) {
     lastConectionState = online;
