@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.1.1](https://github.com/Alexius2408/WebSumize/compare/v0.1.0...v0.1.1) (2026-11-19)
+
+### Bug Fixes
+
+* **login:** run online check in main process ([efe2cad](https://github.com/Alexius2408/WebSumize/commit/efe2cad9b2c1332806e07788364b71c877a76792))
+
+### Improvements
+
+* remove dead code and duplicated logic ([a1fee32](https://github.com/Alexius2408/WebSumize/commit/a1fee32f0ec7e289391d1d7c7e34c8a766fc9681))
+
 ## [0.1.0](https://github.com/Alexius2408/WebSumize/compare/v0.0.44...v0.1.0) (2026-11-18)
 
 ### New Features
