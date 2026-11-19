@@ -16,28 +16,22 @@ const {
 } = require("../services/storageService.js");
 
 async function getTodayTimetable(untis, foreceSafe = false) {
-  let timetable = await getTimetableCache();
-
-  if (timetable == null) {
-    return await getTodayTimetableFromWebUntis(untis);
-  }
-
-  const chacheTime = Date.now() - timetable.timestamp;
+  const timetable = await getTimetableCache();
   const CACHE_DURATION = 1_800_000; // 30 minutes 30 * 60 * 1000
 
   if (
     !foreceSafe &&
-    chacheTime < CACHE_DURATION &&
-    timetable != null
+    timetable != null &&
+    Date.now() - timetable.timestamp < CACHE_DURATION
   ) {
-    return await timetable.timetable;
+    return timetable.timetable;
   }
 
   return getTodayTimetableFromWebUntis(untis);
 }
 
 async function getTodayTimetableFromWebUntis(untis) {
-  timetable = await untis.getOwnTimetableFor(new Date());
+  const timetable = await untis.getOwnTimetableFor(new Date());
   saveTimetableCache(timetable);
 
   return timetable;

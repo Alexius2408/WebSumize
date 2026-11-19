@@ -23,9 +23,7 @@ async function getData() {
 }
 
 async function delData() {
-  if (getData()) {
-    await keytar.deletePassword(GENERALLY.APP_NAME, "currentLoginedUser");
-  }
+  await keytar.deletePassword(GENERALLY.APP_NAME, "currentLoginedUser");
 }
 
 function createCacheDir() {

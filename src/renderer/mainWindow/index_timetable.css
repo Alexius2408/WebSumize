@@ -1,7 +1,6 @@
 #timetable-box {
   padding: 10px 0px;
   display: flex;
-  align-items: stretch;
   margin: 0 auto;
   flex-direction: column;
   align-items: center;
@@ -18,7 +17,6 @@
 #timetable {
   padding: 10px 0px;
   display: flex;
-  align-items: stretch;
   margin: 0 auto;
   flex-direction: column;
   align-items: center;
@@ -41,14 +39,8 @@
   display: flex;
   flex-direction: row;
   width: 92%;
-  height: 17%;
   gap: 8px;
   margin: 5px 0px;
-}
-@container (max-width: 500px) {
-  .doubble-lecture {
-    width: 93.2%;
-  }
 }
 
 .doubble-lecture .timetable-lecture {
@@ -66,7 +58,6 @@
   align-items: start;
   padding: 8px;
   width: 90%;
-  height: 17%;
   background-color: var(--timetable-lecture-bg-color);
   border-radius: 0.5rem;
 }

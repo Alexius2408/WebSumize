@@ -65,20 +65,19 @@ logoutbutton.addEventListener("click", async (event) => {
   );
 });
 
-loadTimetable();
-
-refreshButton.addEventListener("click", async (event) => {
-  
+async function refreshTimetable() {
   refreshButton.style.animation = "fullrotate 0.5s ";
   await loadTimetable(true);
   refreshButton.style.animation = "";
-});
+}
+
+loadTimetable();
+
+refreshButton.addEventListener("click", refreshTimetable);
 
 window.addEventListener("keydown", async (event) => {
   if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === "r") {
     event.preventDefault();
-    refreshButton.style.animation = "fullrotate 0.5s ";
-    await loadTimetable(true);
-    refreshButton.style.animation = "";
+    await refreshTimetable();
   }
 });

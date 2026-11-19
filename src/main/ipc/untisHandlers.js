@@ -11,19 +11,12 @@
 
 const { ipcMain } = require("electron");
 const { getTodayTimetable } = require("../../api/webUnitsAPI.js");
-const { updateTray } = require("../trayIcon.js");
 
 function setupUntisHandlers({
   getUntisInstance,
   setUntisInstance,
   createUnitsInstance,
-  createWindow,
-  hasUserInstance,
-  userWipeEverything,
-  getMainWindow,
-  getMiniWindow,
-  setMainWindow,
-  setMiniWindow,
+  refreshTray,
 }) {
   ipcMain.handle("units-create-instance", async (event, data) => {
     setUntisInstance(await createUnitsInstance(data));
@@ -43,30 +36,14 @@ function setupUntisHandlers({
         throw err;
       }
     } finally {
-      updateTray(
-        createWindow,
-        hasUserInstance,
-        userWipeEverything,
-        getMainWindow,
-        getMiniWindow,
-        setMainWindow,
-        setMiniWindow,
-      );
+      refreshTray();
     }
     return { "2FA": needs2FA };
   });
 
   ipcMain.handle("units-del-instance", async () => {
-    if (getUntisInstance() != null) setUntisInstance(null);
-    updateTray(
-      createWindow,
-      hasUserInstance,
-      userWipeEverything,
-      getMainWindow,
-      getMiniWindow,
-      setMainWindow,
-      setMiniWindow,
-    );
+    setUntisInstance(null);
+    refreshTray();
   });
 
   ipcMain.handle("untis-logout", async () => {
@@ -78,30 +55,7 @@ function setupUntisHandlers({
         console.error("Problem with logout (File: untisHandlers.js) " + err.message);
       }
     }
-    updateTray(
-      createWindow,
-      hasUserInstance,
-      userWipeEverything,
-      getMainWindow,
-      getMiniWindow,
-      setMainWindow,
-      setMiniWindow,
-    );
-  });
-
-  ipcMain.handle("untis-validate-session", async () => {
-    const instance = getUntisInstance();
-    updateTray(
-      createWindow,
-      hasUserInstance,
-      userWipeEverything,
-      getMainWindow,
-      getMiniWindow,
-      setMainWindow,
-      setMiniWindow,
-    );
-    if (!instance) return true;
-    return await instance.validateSession();
+    refreshTray();
   });
 
   ipcMain.handle("get-today-timetable", async (event, refresh) => {

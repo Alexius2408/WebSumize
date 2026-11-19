@@ -7,7 +7,7 @@
 
  File: trayIcon.js
  Description: This file crates the tray icon for the App.
-        The features are, that you can single (for smal Window) or doubble click (for the large window) on the Tray icon. 
+        The features are, that you can single (for smal Window) or doubble click (for the large window) on the Tray icon.
         You can also right click on the tray icon for also a logout (logsout of every window) and exit button (closes the app)
 */
 
@@ -16,29 +16,24 @@ const { PATHS } = require("../utils/constants.js");
 
 let tray = null
 let singleClickTimer = null;
-async function createTray({
+
+function buildMenu(
+  logedin,
   createWindow,
-  hasUserInstance,
   userWipeEverything,
   getMainWindow,
   getMiniWindow,
   setMainWindow,
   setMiniWindow,
-}) {
-  if (!tray) {
-    tray = new Tray(PATHS.ICON_PATH);
-  }
-
-  const logedin = await hasUserInstance();
-
-  const menu = Menu.buildFromTemplate([
+) {
+  return Menu.buildFromTemplate([
     {
       label: "Open Main Window",
       click: async () => {
         const mainWin = getMainWindow();
 
         if (!mainWin) {
-          const result = createWindow(
+          createWindow(
             !logedin,
             true,
             getMainWindow,
@@ -46,9 +41,6 @@ async function createTray({
             setMainWindow,
             setMiniWindow,
           );
-
-          setMainWindow(result.mainWin);
-          setMiniWindow(result.miniWin);
         } else {
           mainWin.show();
         }
@@ -61,7 +53,7 @@ async function createTray({
         let miniWin = getMiniWindow();
 
         if (!miniWin) {
-          const result = createWindow(
+          createWindow(
             !logedin,
             !logedin,
             getMainWindow,
@@ -69,9 +61,6 @@ async function createTray({
             setMainWindow,
             setMiniWindow,
           );
-
-          setMainWindow(result.mainWin);
-          setMiniWindow(result.miniWin);
         } else {
           miniWin.show();
         }
@@ -80,8 +69,26 @@ async function createTray({
     { label: "Logout", click: () => userWipeEverything() },
     { label: "Exit", click: () => app.quit() },
   ]);
+}
 
-  tray.setContextMenu(menu);
+async function createTray({
+  createWindow,
+  hasUserInstance,
+  userWipeEverything,
+  getMainWindow,
+  getMiniWindow,
+  setMainWindow,
+  setMiniWindow,
+}) {
+  await updateTray(
+    createWindow,
+    hasUserInstance,
+    userWipeEverything,
+    getMainWindow,
+    getMiniWindow,
+    setMainWindow,
+    setMiniWindow,
+  );
   tray.setToolTip("WebSumize");
 
   tray.on("double-click", async () => {
@@ -95,7 +102,7 @@ async function createTray({
     if (mainWin) {
       mainWin.show();
     } else {
-      const result = createWindow(
+      createWindow(
         !(await hasUserInstance()),
         true,
         getMainWindow,
@@ -103,9 +110,6 @@ async function createTray({
         setMainWindow,
         setMiniWindow,
       );
-
-      setMainWindow(result.mainWin);
-      setMiniWindow(result.miniWin);
     }
   });
 
@@ -115,16 +119,15 @@ async function createTray({
     }
 
     singleClickTimer = setTimeout(async () => {
-      const result = createWindow(
-        !(await hasUserInstance()),
-        !(await hasUserInstance()),
+      const logedin = await hasUserInstance();
+      createWindow(
+        !logedin,
+        !logedin,
         getMainWindow,
         getMiniWindow,
         setMainWindow,
         setMiniWindow,
       );
-      setMainWindow(result.mainWin);
-      setMiniWindow(result.miniWin);
       singleClickTimer = null;
     }, 300);
   });
@@ -139,63 +142,24 @@ async function updateTray (
   setMainWindow,
   setMiniWindow,
 ) {
-
   if (!tray) {
     tray = new Tray(PATHS.ICON_PATH);
   }
 
   const logedin = await hasUserInstance();
 
-  tray.setContextMenu(Menu.buildFromTemplate([ {
-      label: "Open Main Window",
-      click: async () => {
-        const mainWin = getMainWindow();
-
-        if (!mainWin) {
-          const result = createWindow(
-            !logedin,
-            true,
-            getMainWindow,
-            getMiniWindow,
-            setMainWindow,
-            setMiniWindow,
-          );
-
-          setMainWindow(result.mainWin);
-          setMiniWindow(result.miniWin);
-        } else {
-          mainWin.show();
-        }
-      },
-    },
-    {
-      label: "Open Mini Window" + (logedin ? "" : " (Login required)"),
-      enabled: logedin,
-      click: async () => {
-        let miniWin = getMiniWindow();
-
-        if (!miniWin) {
-          const result = createWindow(
-            !logedin,
-            !logedin,
-            getMainWindow,
-            getMiniWindow,
-            setMainWindow,
-            setMiniWindow,
-          );
-
-          setMainWindow(result.mainWin);
-          setMiniWindow(result.miniWin);
-        } else {
-          miniWin.show();
-        }
-      },
-    },
-    { label: "Logout", click: () => userWipeEverything() },
-    { label: "Exit", click: () => app.quit() },
-  ]));
-
-  }
+  tray.setContextMenu(
+    buildMenu(
+      logedin,
+      createWindow,
+      userWipeEverything,
+      getMainWindow,
+      getMiniWindow,
+      setMainWindow,
+      setMiniWindow,
+    ),
+  );
+}
 
 module.exports = {
   createTray,

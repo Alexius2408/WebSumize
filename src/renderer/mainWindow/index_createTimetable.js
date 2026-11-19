@@ -78,52 +78,35 @@ function getLessonsOrganisedByTime(timetable) {
   return lectures;
 }
 
+function joinNames(list) {
+  if (list.length > 1) {
+    let names = [];
+    for (const element of list) {
+      names.push(element.name);
+    }
+    return names.join(" / ");
+  }
+  return list[0].name;
+}
+
+function appendField(lecture, className, text) {
+  const field = document.createElement("p");
+  field.classList.add(className);
+  field.textContent = text;
+  lecture.appendChild(field);
+}
+
 function crateOneLecture(timetable) {
   let lecture = document.createElement("div");
 
   lecture.id = timetable.id;
   lecture.classList.add("timetable-lecture");
 
-  let startTime = document.createElement("p");
-
-  startTime.classList.add("start-time");
-  startTime.textContent = formatUntisTime(timetable.startTime);
-  lecture.appendChild(startTime);
-
-  let lectureName = document.createElement("p");
-
-  lectureName.classList.add("lecture-name");
-  if (timetable.su.length > 1) {
-    lectureName.textContent = timetable.su.map(({ name }) => name).join(" / ");
-  } else {
-    lectureName.textContent = timetable.su[0].name;
-  }
-  lecture.appendChild(lectureName);
-
-  let className = document.createElement("p");
-
-  className.classList.add("class-name");
-  if (timetable.kl.length > 1) {
-    className.textContent = timetable.kl.map(({ name }) => name).join(" / ");
-  } else {
-    className.textContent = timetable.kl[0].name;
-  }
-  lecture.appendChild(className);
-
-  let roomName = document.createElement("p");
-
-  roomName.classList.add("room-name");
-  if (timetable.ro.length > 1) {
-    roomName.textContent = timetable.ro.map(({ name }) => name).join(" / ");
-  } else {
-    roomName.textContent = timetable.ro[0].name;
-  }
-  lecture.appendChild(roomName);
-
-  let endTime = document.createElement("p");
-  endTime.classList.add("end-time");
-  endTime.textContent = formatUntisTime(timetable.endTime);
-  lecture.appendChild(endTime);
+  appendField(lecture, "start-time", formatUntisTime(timetable.startTime));
+  appendField(lecture, "lecture-name", joinNames(timetable.su));
+  appendField(lecture, "class-name", joinNames(timetable.kl));
+  appendField(lecture, "room-name", joinNames(timetable.ro));
+  appendField(lecture, "end-time", formatUntisTime(timetable.endTime));
 
   return lecture;
 }

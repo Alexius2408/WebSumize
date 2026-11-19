@@ -32,16 +32,6 @@ p {
   align-items: center;
 }
 
-#dropdownBtn {
-  padding: 1.8vh 2.4vw;
-  font-size: 1rem;
-  background-color: var(--input-text-color);
-  color: white;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-}
-
 #lines {
   margin-right: 10px;
   margin-left: auto;
@@ -124,8 +114,4 @@ p {
   to {
     transform: rotate(-360deg) scaleX(-1);
   }
-}
-
-.refreshBtn {
-  margin-left: 20;
 }

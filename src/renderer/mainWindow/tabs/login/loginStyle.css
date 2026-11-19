@@ -209,10 +209,6 @@ button:disabled {
     font-size: 4rem;
   }
 
-  #writer-content {
-    white-space: inline;
-  }
-
   #writer-cursor {
     display: inline-block;
     vertical-align: text-bottom;

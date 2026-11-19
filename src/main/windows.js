@@ -10,12 +10,7 @@
               It handles the login, main, and mini windows, and controls external link navigation for security.
 */
 
-const {
-  BrowserWindow,
-  shell,
-  Menu,
-  nativeTheme,
-} = require("electron");
+const { BrowserWindow, shell, Menu } = require("electron");
 const path = require("path");
 
 const { GENERALLY, PATHS } = require("../utils/constants.js");

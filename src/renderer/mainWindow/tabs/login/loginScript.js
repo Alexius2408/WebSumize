@@ -27,6 +27,7 @@ const longText = document.getElementById("login-text");
 const loginFailedInfo = document.getElementById("loginFailedInfoLink");
 const inputs = document.querySelectorAll(".input");
 const loader = document.getElementById("loaderAnim");
+const offlineText = document.getElementById("offlineText");
 
 let isSubmitting = false;
 let FA_input_required = false;
@@ -47,11 +48,19 @@ document.querySelectorAll(".password-toggle").forEach((toggle) => {
   });
 });
 
-loginButton.classList.remove("loginButtonLoading");
-loader.classList.add("hidden");
-loginButton.firstChild.textContent = "LOGIN";
-loginFailed.classList.add("hidden");
-loginFailedInfo.classList.add("hidden");
+function stopLoading() {
+  loginButton.firstChild.textContent = "LOGIN";
+  loginButton.classList.remove("loginButtonLoading");
+  loader.classList.add("hidden");
+}
+
+function showLoginFailed(visible) {
+  loginFailed.classList.toggle("hidden", !visible);
+  loginFailedInfo.classList.toggle("hidden", !visible);
+}
+
+stopLoading();
+showLoginFailed(false);
 
 function setLoginButton() {
   let hasEmpty = false;
@@ -91,7 +100,6 @@ let lastTypedText = "";
 
 function choosText(lastTypedText) {
   while (typingText === lastTypedText) {
-    typingText = "";
     typingText = texts[Math.floor(Math.random() * texts.length)];
   }
   return typingText;
@@ -133,8 +141,7 @@ function delCharLoop() {
 
 inputs.forEach((input) => {
   input.addEventListener("input", () => {
-    loginFailed.classList.add("hidden");
-    loginFailedInfo.classList.add("hidden");
+    showLoginFailed(false);
     setLoginButton();
   });
 });
@@ -179,9 +186,7 @@ async function login(event) {
       secretBox.classList.remove("hidden");
       normal_login_box.classList.add("hidden");
       longText.textContent = "Enter 2FA secret Key to continue";
-      loginButton.firstChild.textContent = "LOGIN";
-      loginButton.classList.remove("loginButtonLoading");
-      loader.classList.add("hidden");
+      stopLoading();
       return;
     }
 
@@ -192,17 +197,11 @@ async function login(event) {
       "src/renderer/mainWindow/index.html",
     );
 
-    loginButton.classList.remove("loginButtonLoading");
-    loader.classList.add("hidden");
-    loginButton.firstChild.textContent = "LOGIN";
-    loginFailed.classList.add("hidden");
-    loginFailedInfo.classList.add("hidden");
+    stopLoading();
+    showLoginFailed(false);
   } catch (err) {
-    loginButton.firstChild.textContent = "LOGIN";
-    loginButton.classList.remove("loginButtonLoading");
-    loader.classList.add("hidden");
-    loginFailed.classList.remove("hidden");
-    loginFailedInfo.classList.remove("hidden");
+    stopLoading();
+    showLoginFailed(true);
 
     console.error("(File: loginScript.js) " + err.message || String(err));
 
@@ -213,9 +212,7 @@ async function login(event) {
   }
 }
 
-loginButton.addEventListener("click", async (event) => {
-  await login(event);
-});
+loginButton.addEventListener("click", login);
 
 let textEl;
 
@@ -239,16 +236,9 @@ setInterval(async () => {
 
   if (online !== lastConectionState) {
     lastConectionState = online;
-    if (online) {
-      document.getElementById("offlineText").classList.add("hidden");
-      inputs.forEach((element) => {
-        element.disabled = false;
-      });
-    } else {
-      document.getElementById("offlineText").classList.remove("hidden");
-      inputs.forEach((element) => {
-        element.disabled = true;
-      });
-    }
+    offlineText.classList.toggle("hidden", online);
+    inputs.forEach((element) => {
+      element.disabled = !online;
+    });
   }
 }, 5000);

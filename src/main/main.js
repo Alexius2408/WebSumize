@@ -13,7 +13,6 @@ const { app } = require("electron");
 const path = require("path");
 const { WebUntis, WebUntisSecretAuth } = require("webuntis");
 const { authenticator: Authenticator } = require("otplib");
-const fs = require("fs");
 
 const { PATHS, initalizeNullVariables } = require("../utils/constants.js");
 
@@ -56,6 +55,29 @@ function setMiniWindow(win) {
   miniWin = win;
 }
 
+function openLoginWindow() {
+  createWindow(
+    true,
+    true,
+    getMainWindow,
+    getMiniWindow,
+    setMainWindow,
+    setMiniWindow,
+  );
+}
+
+function refreshTray() {
+  updateTray(
+    createWindow,
+    hasUserInstance,
+    userWipeEverything,
+    getMainWindow,
+    getMiniWindow,
+    setMainWindow,
+    setMiniWindow,
+  );
+}
+
 app.whenReady().then(async () => {
   await initalizeNullVariables(app);
   setupIpcHandlers({
@@ -66,9 +88,7 @@ app.whenReady().then(async () => {
     getMiniWindow,
     setMainWindow,
     setMiniWindow,
-    createWindow,
-    hasUserInstance,
-    userWipeEverything,
+    refreshTray,
   });
 
   createTray({
@@ -82,73 +102,17 @@ app.whenReady().then(async () => {
   });
 
   untisInstance = await createUnitsInstance();
-  if (untisInstance == null) {
-    const result = createWindow(
-      true,
-      true,
-      getMainWindow,
-      getMiniWindow,
-      setMainWindow,
-      setMiniWindow,
-    );
-    mainWin = result.mainWin;
-    miniWin = result.miniWin;
-  } else {
-    let userData = await getData();
-
-    if (!userData) {
-      const result = createWindow(
-        true,
-        true,
-        getMainWindow,
-        getMiniWindow,
-        setMainWindow,
-        setMiniWindow,
-      );
-      mainWin = result.mainWin;
-      miniWin = result.miniWin;
-    } else {
-      try {
-        if (untisInstance) {
-          await untisInstance.login();
-          updateTray(
-            createWindow,
-            hasUserInstance,
-            userWipeEverything,
-            getMainWindow,
-            getMiniWindow,
-            setMainWindow,
-            setMiniWindow,
-          );
-        } else {
-          const result = createWindow(
-            true,
-            true,
-            getMainWindow,
-            getMiniWindow,
-            setMainWindow,
-            setMiniWindow,
-          );
-
-          mainWin = result.mainWin;
-          miniWin = result.miniWin;
-        }
-      } catch (err) {
-        console.error("Problem with login (File: main.js) " + err.message);
-        untisInstance = null;
-        const result = createWindow(
-          true,
-          true,
-          getMainWindow,
-          getMiniWindow,
-          setMainWindow,
-          setMiniWindow,
-        );
-        mainWin = result.mainWin;
-        miniWin = result.miniWin;
-      }
+  if (untisInstance) {
+    try {
+      await untisInstance.login();
+      refreshTray();
+      return;
+    } catch (err) {
+      console.error("Problem with login (File: main.js) " + err.message);
+      untisInstance = null;
     }
   }
+  openLoginWindow();
 });
 
 app.on("window-all-closed", () => {
@@ -164,7 +128,7 @@ async function createUnitsInstance(data) {
   if (!data) {
     data = await getData();
   }
-  userData = JSON.parse(data);
+  const userData = JSON.parse(data);
 
   try {
     for (const value of Object.values(userData)) {
@@ -216,37 +180,16 @@ async function userWipeEverything() {
     miniWin.close();
   }
 
-  updateTray(
-    createWindow,
-    hasUserInstance,
-    userWipeEverything,
-    getMainWindow,
-    getMiniWindow,
-    setMainWindow,
-    setMiniWindow,
+  refreshTray();
+
+  const loginPage = path.join(
+    PATHS.USERROOT,
+    "src/renderer/mainWindow/tabs/login/login.html",
   );
 
-  if (
-    mainWin &&
-    mainWin.webContents.getURL() !==
-      `file://${path.join(PATHS.USERROOT, "src/renderer/mainWindow/tabs/login/login.html")}`
-  ) {
-    mainWin.loadFile(
-      path.join(
-        PATHS.USERROOT,
-        "src/renderer/mainWindow/tabs/login/login.html",
-      ),
-    );
+  if (mainWin && mainWin.webContents.getURL() !== `file://${loginPage}`) {
+    mainWin.loadFile(loginPage);
   } else {
-    const result = createWindow(
-      true,
-      true,
-      getMainWindow,
-      getMiniWindow,
-      setMainWindow,
-      setMiniWindow,
-    );
-    mainWin = result.mainWin;
-    miniWin = result.miniWin;
+    openLoginWindow();
   }
 }
